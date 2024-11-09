@@ -88,6 +88,30 @@
     <Filter Include="Header Files\template-built-ins\GL">
       <UniqueIdentifier>{663bdca5-1476-48d8-8b35-00bd1f0c790c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Source">
+      <UniqueIdentifier>{36b93559-7ed1-4e52-9eef-1c91935dd87a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\Application">
+      <UniqueIdentifier>{26b4df3e-59d7-4515-9d7f-aa5c34095dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\GlobalClock">
+      <UniqueIdentifier>{32113a72-9577-470f-8c75-c987f7590a45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\InputManager">
+      <UniqueIdentifier>{f0c2c747-56c7-4065-8d48-d30d957fd659}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\RandomGenerator">
+      <UniqueIdentifier>{5b45d396-732d-4506-843f-2b0eaeaecf1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\Renderer">
+      <UniqueIdentifier>{b21fe24b-4b8c-43e9-92bf-5bb366301a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\TextureManager">
+      <UniqueIdentifier>{c85b8577-dc52-424d-8c1e-1cc3f7523c3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\WindowManager">
+      <UniqueIdentifier>{513533d2-b302-49e9-9633-0ba77938358a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -104,6 +128,27 @@
     </ClCompile>
     <ClCompile Include="include\glm\detail\glm.cpp">
       <Filter>Header Files\template-built-ins\glm\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Application\Application.cpp">
+      <Filter>Source Files\Source\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GlobalClock\GlobalClock.cpp">
+      <Filter>Source Files\Source\GlobalClock</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\InputManager\InputManager.cpp">
+      <Filter>Source Files\Source\InputManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WindowManager\WindowManager.cpp">
+      <Filter>Source Files\Source\WindowManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\TextureManager\TextureManager.cpp">
+      <Filter>Source Files\Source\TextureManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Renderer\Renderer.cpp">
+      <Filter>Source Files\Source\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RandomGenerator\RandomGenerator.cpp">
+      <Filter>Source Files\Source\RandomGenerator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -997,6 +1042,27 @@
     </ClInclude>
     <ClInclude Include="include\glm\simd\vector_relational.h">
       <Filter>Header Files\template-built-ins\glm\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Application\Application.h">
+      <Filter>Source Files\Source\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GlobalClock\GlobalClock.h">
+      <Filter>Source Files\Source\GlobalClock</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\InputManager\InputManager.h">
+      <Filter>Source Files\Source\InputManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WindowManager\WindowManager.h">
+      <Filter>Source Files\Source\WindowManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\TextureManager\TextureManager.h">
+      <Filter>Source Files\Source\TextureManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Renderer\Renderer.h">
+      <Filter>Source Files\Source\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RandomGenerator\RandomGenerator.h">
+      <Filter>Source Files\Source\RandomGenerator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
