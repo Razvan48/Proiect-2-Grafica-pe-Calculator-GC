@@ -10,7 +10,7 @@ private:
 	GlobalClock(const GlobalClock&& other) = delete;
 	GlobalClock& operator= (const GlobalClock&& other) = delete;
 
-	float currenTime;
+	float currentTime;
 	float lastTime;
 	float deltaTime;
 
@@ -18,7 +18,7 @@ public:
 	static GlobalClock& get();
 	void update();
 
-	inline float getCurrentTime() const { return this->currenTime; }
+	inline float getCurrentTime() const { return this->currentTime; }
 	inline float getLastTime() const { return this->lastTime; }
 	inline float getDeltaTime() const { return this->deltaTime; }
 };
