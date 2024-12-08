@@ -3,7 +3,7 @@
 
 ### &emsp; Membrii Echipa: <br/>
 Capatina Razvan Nicolae ($352$) <br/> 
-Mihalache Sebastian-Stefan ($352$) <br/>
+Mihalache Sebastian Stefan ($352$) <br/>
 Luculescu Teodor ($351$) <br/>
 Petrovici Ricardo ($351$) <br/>
 
