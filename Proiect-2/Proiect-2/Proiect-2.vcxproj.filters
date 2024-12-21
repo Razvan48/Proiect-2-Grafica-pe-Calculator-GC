@@ -112,6 +112,15 @@
     <Filter Include="Source Files\Source\WindowManager">
       <UniqueIdentifier>{513533d2-b302-49e9-9633-0ba77938358a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Source\Skybox">
+      <UniqueIdentifier>{a9bab46c-8b81-4d09-ab90-f897c3848de5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\Skybox">
+      <UniqueIdentifier>{c16ae602-b1ff-4b52-a676-7c72cd0b82d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\Camera">
+      <UniqueIdentifier>{afd32d81-6784-42c0-b46a-2fde9fa57c25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -149,6 +158,15 @@
     </ClCompile>
     <ClCompile Include="Source\RandomGenerator\RandomGenerator.cpp">
       <Filter>Source Files\Source\RandomGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Skybox\Skybox.cpp">
+      <Filter>Source Files\Source\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stb_image.cpp">
+      <Filter>Source Files\template-built-ins\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera\Camera.cpp">
+      <Filter>Source Files\Source\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1064,6 +1082,15 @@
     <ClInclude Include="Source\RandomGenerator\RandomGenerator.h">
       <Filter>Source Files\Source\RandomGenerator</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Skybox\Skybox.h">
+      <Filter>Source Files\Source\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Camera\Camera.h">
+      <Filter>Source Files\Source\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stb_image.h">
+      <Filter>Header Files\template-built-ins\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt">
@@ -1544,6 +1571,12 @@
     </None>
     <None Include="lib\x64\GL\DLLs\glew32.dll">
       <Filter>Resource Files\template-built-ins\DLLs\64b</Filter>
+    </None>
+    <None Include="Shaders\Skybox\skybox.frag">
+      <Filter>Resource Files\shaders\Skybox</Filter>
+    </None>
+    <None Include="Shaders\Skybox\skybox.vert">
+      <Filter>Resource Files\shaders\Skybox</Filter>
     </None>
   </ItemGroup>
 </Project>

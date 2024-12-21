@@ -7,104 +7,162 @@
 #include <GL/freeglut.h> // nu trebuie uitat freeglut.h
 #include "loadShaders.h"
 
+#include <iostream>
 
-//////////////////////////////////////
+#include "Source/Camera/Camera.h"
+#include "Source/Skybox/Skybox.h"
 
-GLuint
-VaoId,
-VboId,
-ColorBufferId,
-ProgramId;
+// Window settings
+const unsigned int SCR_WIDTH = 1400;
+const unsigned int SCR_HEIGHT = 800;
 
+// Global clock
+const float deltaTime = 0.11f; // TODO: TEST - de folosit global clock
 
-void CreateVBO(void)
+// Camera settings
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+bool firstMouse = true;
+float lastX = static_cast<float>(SCR_WIDTH) / 2.0f;
+float lastY = static_cast<float>(SCR_HEIGHT) / 2.0f;
+
+// Objects
+Skybox* skybox;
+
+// Callbacks
+void processNormalKeys(unsigned char key, int x, int y)
 {
-	// varfurile 
-	GLfloat Vertices[] = {
-		0.5f,  0.5f, 0.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f,
-		-0.5f, -0.5f, 0.0f, 1.0f,
-		-0.5f, -0.5f, 0.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f, 1.0f,
-		0.5f,  0.5f, 0.0f, 1.0f
-	};
+	switch (key)
+	{
+	case 'w':
+	case 'W':
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+		break;
 
-	// culorile, ca atribute ale varfurilor
-	GLfloat Colors[] = {
-	  1.0f, 0.5f, 0.2f, 1.0f,
-	  1.0f, 0.5f, 0.2f, 1.0f,
-	  1.0f, 0.5f, 0.2f, 1.0f,
-	  1.0f, 0.5f, 0.2f, 1.0f,
-	  1.0f, 0.5f, 0.2f, 1.0f,
-	  1.0f, 0.5f, 0.2f, 1.0f,
-	};
+	case 's':
+	case 'S':
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+		break;
 
-	// se creeaza un buffer nou
-	glGenBuffers(1, &VboId);
-	// este setat ca buffer curent
-	glBindBuffer(GL_ARRAY_BUFFER, VboId);
-	// varfurile sunt "copiate" in bufferul curent
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+	case 'a':
+	case 'A':
+		camera.ProcessKeyboard(LEFT, deltaTime);
+		break;
 
-	// se creeaza / se leaga un VAO (Vertex Array Object) - util cand se utilizeaza mai multe VBO
-	glGenVertexArrays(1, &VaoId);
-	glBindVertexArray(VaoId);
-	// se activeaza lucrul cu atribute; atributul 0 = pozitie
-	glEnableVertexAttribArray(0);
-	// 
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	case 'd':
+	case 'D':
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+		break;
 
-	// un nou buffer, pentru culoare
-	glGenBuffers(1, &ColorBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, ColorBufferId);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Colors), Colors, GL_STATIC_DRAW);
-	// atributul 1 =  culoare
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	case 'e':
+	case 'E':
+		camera.ProcessKeyboard(UP, deltaTime);
+		break;
+
+	case 'q':
+	case 'Q':
+		camera.ProcessKeyboard(DOWN, deltaTime);
+		break;
+	}
+
+	// ESC
+	if (key == 27)
+	{
+		exit(0);
+	}
 }
-void DestroyVBO(void)
+
+void processSpecialKeys(int key, int x, int y)
 {
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(0);
+	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
+	{
+		std::cout << "SHIFT DOWN" << std::endl;
+		camera.SetMovementSpeed(5.0f);
+	}
+}
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &ColorBufferId);
-	glDeleteBuffers(1, &VboId);
+void processNormalKeysUp(unsigned char key, int x, int y)
+{
+	// TODO
+}
 
-	glBindVertexArray(0);
-	glDeleteVertexArrays(1, &VaoId);
+void processSpecialKeysUp(int key, int x, int y)
+{
+	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
+	{
+		std::cout << "SHIFT UP" << std::endl;
+		camera.SetMovementSpeed(2.0f);
+	}
+}
+
+void processMouseInput(int xpos, int ypos)
+{
+	int xoffset = xpos - SCR_WIDTH / 2;
+	int yoffset = SCR_HEIGHT / 2 - ypos;
+
+	if (xoffset != 0 || yoffset != 0)
+	{
+		glutWarpPointer(SCR_WIDTH / 2, SCR_HEIGHT / 2);
+		camera.ProcessMouseMovement(xoffset, yoffset);
+		glutPostRedisplay();
+	}
+}
+
+void processMouseKeys(int button, int state, int x, int y)
+{
+	if (state == GLUT_DOWN)
+	{
+		if (button == 3)
+		{
+			camera.ProcessMouseScroll(1.0);
+		}
+		else if (button == 4)
+		{
+			camera.ProcessMouseScroll(-1.0);
+		}
+	}
 }
 
 void CreateShaders(void)
 {
-	ProgramId = LoadShaders("example.vert", "example.frag");
-	glUseProgram(ProgramId);
+	// TODO
+	//ProgramId = LoadShaders("example.vert", "example.frag");
+	//glUseProgram(ProgramId);
 }
+
 void DestroyShaders(void)
 {
-	glDeleteProgram(ProgramId);
+	// TODO
+	//glDeleteProgram(ProgramId);
 }
 
 void Initialize(void)
 {
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // culoarea de fond a ecranului
-	CreateVBO();
 	CreateShaders();
+
+	// Objects
+	skybox = new Skybox();
 }
+
 void RenderFunction(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);       
 
 	// Functiile de desenare
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glDrawArrays(GL_TRIANGLES, 3, 3);
+	// TODO
+
+	// Draw skybox as last
+	skybox->Render(camera);
 
 	glFlush();
 }
+
 void Cleanup(void)
 {
 	DestroyShaders();
-	DestroyVBO();
+
+	// Objects
+	delete skybox;
 }
 
 int main(int argc, char* argv[])
@@ -112,12 +170,23 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowPosition(100, 100); // pozitia initiala a ferestrei
-	glutInitWindowSize(600, 600); //dimensiunile ferestrei
-	glutCreateWindow("Grafica pe calculator - primul exemplu"); // titlul ferestrei
-	glewInit(); // nu uitati de initializare glew; trebuie initializat inainte de a a initializa desenarea
+	glutInitWindowSize(SCR_WIDTH, SCR_HEIGHT);
+	glutCreateWindow("Grafica pe calculator - Proiect 2");
+
+	glewInit();
 	Initialize();
+
 	glutDisplayFunc(RenderFunction);
+
+	glutSetCursor(GLUT_CURSOR_NONE);
+
+	glutKeyboardFunc(processNormalKeys);
+	glutSpecialFunc(processSpecialKeys);
+	glutKeyboardUpFunc(processNormalKeysUp);
+	glutSpecialUpFunc(processSpecialKeysUp);
+	glutPassiveMotionFunc(processMouseInput);
+	glutMouseFunc(processMouseKeys);
+
 	glutCloseFunc(Cleanup);
 	glutMainLoop();
 }
-
