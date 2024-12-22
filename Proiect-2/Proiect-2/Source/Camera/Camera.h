@@ -47,6 +47,8 @@ public:
 	inline glm::mat4 GetViewMatrix() const { return glm::lookAt(position, position + front, up); }
 	inline float GetZoom() const { return zoom; }
 
+	inline glm::vec3 GetPosition() const { return position; }
+
 	// Setters
 	inline void SetMovementSpeed(float speed) { movementSpeed = speed; }
 

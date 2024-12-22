@@ -3,7 +3,7 @@
 WindowManager::WindowManager()
     : WINDOW_WIDTH(1024), WINDOW_HEIGHT(768), WINDOW_TITLE("Proiect-2"), WINDOW_POS_X(100), WINDOW_POS_Y(100)
 {
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowSize(this->WINDOW_WIDTH, this->WINDOW_HEIGHT);
     glutInitWindowPosition(WINDOW_POS_X, WINDOW_POS_Y);
     glutCreateWindow(this->WINDOW_TITLE.c_str());

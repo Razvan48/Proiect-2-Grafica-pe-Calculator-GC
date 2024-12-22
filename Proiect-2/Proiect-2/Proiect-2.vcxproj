@@ -181,7 +181,10 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="Source\Camera\Camera.cpp" />
     <ClCompile Include="Source\GlobalClock\GlobalClock.cpp" />
     <ClCompile Include="Source\InputManager\InputManager.cpp" />
+    <ClCompile Include="Source\MapChunk\MapChunk.cpp" />
+    <ClCompile Include="Source\Map\Map.cpp" />
     <ClCompile Include="Source\Model\Model.cpp" />
+    <ClCompile Include="Source\PerlinNoise2D\PerlinNoise2D.cpp" />
     <ClCompile Include="Source\RandomGenerator\RandomGenerator.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Skybox\Skybox.cpp" />
@@ -497,7 +500,10 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="Source\Camera\Camera.h" />
     <ClInclude Include="Source\GlobalClock\GlobalClock.h" />
     <ClInclude Include="Source\InputManager\InputManager.h" />
+    <ClInclude Include="Source\MapChunk\MapChunk.h" />
+    <ClInclude Include="Source\Map\Map.h" />
     <ClInclude Include="Source\Model\Model.h" />
+    <ClInclude Include="Source\PerlinNoise2D\PerlinNoise2D.h" />
     <ClInclude Include="Source\RandomGenerator\RandomGenerator.h" />
     <ClInclude Include="Source\Renderer\Renderer.h" />
     <ClInclude Include="Source\Skybox\Skybox.h" />
