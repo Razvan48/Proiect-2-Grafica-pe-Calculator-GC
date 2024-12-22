@@ -15,6 +15,8 @@
 #include "Source/Model/Model.h"
 #include "Source/GlobalClock/GlobalClock.h"
 
+#include "Source/TextureManager/TextureManager.h"
+
 #include "Source/Map/Map.h"
 
 // Window settings
@@ -275,6 +277,8 @@ int main(int argc, char* argv[])
 
 	glewInit();
 	Initialize();
+
+	TextureManager::get().loadResources();
 
 	glutDisplayFunc(RenderFunction);
 

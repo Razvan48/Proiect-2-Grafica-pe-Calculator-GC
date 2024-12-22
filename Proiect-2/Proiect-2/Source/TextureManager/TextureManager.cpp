@@ -63,6 +63,9 @@ void TextureManager::loadTexture(const std::string& textureName, const std::stri
 void TextureManager::loadResources()
 {
 	// TODO: Incarcam texturile aici + desenam/descarcam texturi pentru aplicatie.
+
+	this->loadTexture("grass0", "resources/grass/grass0.jpg");
+	this->loadTexture("grass1", "resources/grass/grass1.jpg");
 }
 
 GLuint TextureManager::getTexture(const std::string& textureName)
