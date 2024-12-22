@@ -101,4 +101,4 @@ int MapChunk::calculateChunkY(float y)
 }
 
 const int MapChunk::CHUNK_SIZE = 16;
-const int MapChunk::NUM_QUADS_PER_SIDE = 256;
+const int MapChunk::NUM_QUADS_PER_SIDE = 32;

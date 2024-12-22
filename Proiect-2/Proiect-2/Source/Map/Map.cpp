@@ -4,7 +4,7 @@
 
 
 Map::Map()
-	: NUM_CHUNKS_AHEAD(2)
+	: NUM_CHUNKS_AHEAD(5)
 {
 	this->mapChunks.reserve((this->NUM_CHUNKS_AHEAD * 2 + 1) * (this->NUM_CHUNKS_AHEAD * 2 + 1));
 

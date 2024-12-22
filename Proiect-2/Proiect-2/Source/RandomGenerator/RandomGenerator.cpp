@@ -1,21 +1,39 @@
 #include "RandomGenerator.h"
 
-#include <random>
+RandomGenerator::RandomGenerator()
+    : seed(0)
+{
+	this->generator = std::mt19937(std::random_device()());
+	this->generator.seed(this->seed);
+}
+
+RandomGenerator::~RandomGenerator()
+{
+
+}
+
+RandomGenerator& RandomGenerator::get()
+{
+	static RandomGenerator instance;
+	return instance;
+}
+
+void RandomGenerator::setSeed(int seed)
+{
+	this->seed = seed;
+	this->generator.seed(this->seed);
+}
 
 double RandomGenerator::randomUniformDouble(double minimum, double maximum)
 {
-    static std::random_device randomDevice;
-    static std::mt19937 generator(randomDevice());
     std::uniform_real_distribution<double> distribution(minimum, maximum);
-    return distribution(generator);
+    return distribution(this->generator);
 }
 
 int RandomGenerator::randomUniformInt(int minimum, int maximum)
 {
-    static std::random_device randomDevice;
-    static std::mt19937 generator(randomDevice());
     std::uniform_int_distribution<int> distribution(minimum, maximum);
-    return distribution(generator);
+    return distribution(this->generator);
 }
 
 
