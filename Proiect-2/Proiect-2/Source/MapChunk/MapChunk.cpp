@@ -65,15 +65,21 @@ MapChunk::~MapChunk()
 
 void MapChunk::draw()
 {
-	// TODO:
+	// TODO: (proiectia e facuta aici si nu e ok) (refactoring, asezat mai frumos aici)
 
 	glUseProgram(Map::get().getProgramId());
 
 	// set value for view matrix
+	glm::mat4 projection = glm::perspective(glm::radians(Camera::Get().GetZoom()), 1400.0f / 800.0f, 0.1f, 1000.0f);
 	glm::mat4 view = Camera::Get().GetViewMatrix();
 
+	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "projection"), 1, GL_FALSE, &projection[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "view"), 1, GL_FALSE, &Camera::Get().GetViewMatrix()[0][0]);
+
 	glBindVertexArray(this->VAO);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // TODO: de eliminat, debug, wireframe
 	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // TODO: de eliminat, debug, wireframe
 	glBindVertexArray(0);
 
 	glUseProgram(0);

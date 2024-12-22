@@ -15,6 +15,8 @@
 #include "Source/Model/Model.h"
 #include "Source/GlobalClock/GlobalClock.h"
 
+#include "Source/Map/Map.h"
+
 // Window settings
 const unsigned int SCR_WIDTH = 1400;
 const unsigned int SCR_HEIGHT = 800;
@@ -246,6 +248,9 @@ void RenderFunction(void)
 
 	// Draw skybox as last
 	skybox->Render();
+
+	Map::get().draw();
+	Map::get().update(); // TODO: de mutat de aici (momentan doar sa mearga)
 
 	glutSwapBuffers();
 	glFlush();
