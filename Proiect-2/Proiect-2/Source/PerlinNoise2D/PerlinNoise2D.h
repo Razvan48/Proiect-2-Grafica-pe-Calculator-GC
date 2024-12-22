@@ -13,4 +13,6 @@ private:
 
 public:
 	static PerlinNoise2D& get();
+
+	float perlinNoise2D(float x, float y) const;
 };

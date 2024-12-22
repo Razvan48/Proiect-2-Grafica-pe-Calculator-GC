@@ -18,9 +18,13 @@ private:
 	const int NUM_CHUNKS_AHEAD;
 	std::vector<MapChunk> mapChunks;
 
+	GLuint programId;
+
 public:
 	static Map& get();
 
 	void draw();
 	void update();
+
+	inline GLuint getProgramId() const { return programId; }
 };

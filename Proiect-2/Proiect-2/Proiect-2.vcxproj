@@ -672,6 +672,8 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <None Include="lib\x64\GL\glew32.dll" />
     <None Include="lib\x64\GL\glew32s.dll" />
     <None Include="lib\x64\SOIL\SOIL.dll" />
+    <None Include="shaders\chunkMap\chunkMap.frag" />
+    <None Include="shaders\chunkMap\chunkMap.vert" />
     <None Include="shaders\model\model.frag" />
     <None Include="shaders\model\model.vert" />
     <None Include="Shaders\Skybox\skybox.frag" />

@@ -136,6 +136,9 @@
     <Filter Include="Source Files\Source\PerlinNoise2D">
       <UniqueIdentifier>{12dfe0d6-b74b-46b5-8f3a-62b1784d46cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\shaders\chunkMap">
+      <UniqueIdentifier>{20a7537e-d062-4fec-b8ad-b4308b318322}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -1628,6 +1631,12 @@
     </None>
     <None Include="shaders\model\model.vert">
       <Filter>Resource Files\shaders\model</Filter>
+    </None>
+    <None Include="shaders\chunkMap\chunkMap.frag">
+      <Filter>Resource Files\shaders\chunkMap</Filter>
+    </None>
+    <None Include="shaders\chunkMap\chunkMap.vert">
+      <Filter>Resource Files\shaders\chunkMap</Filter>
     </None>
   </ItemGroup>
 </Project>
