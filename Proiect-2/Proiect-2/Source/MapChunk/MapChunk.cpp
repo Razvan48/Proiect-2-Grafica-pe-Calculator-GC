@@ -92,11 +92,15 @@ void MapChunk::update()
 
 int MapChunk::calculateChunkX(float x)
 {
+	if (x < 0.0f)
+		return 0;
 	return (int)(x / MapChunk::CHUNK_SIZE);
 }
 
 int MapChunk::calculateChunkY(float y)
 {
+	if (y < 0.0f)
+		return 0;
 	return (int)(y / MapChunk::CHUNK_SIZE);
 }
 
