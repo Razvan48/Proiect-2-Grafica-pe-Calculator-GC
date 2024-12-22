@@ -63,11 +63,11 @@ float PerlinNoise2D::calculateInitialHeight(int seed) const
 	return this->DEFAULT_INITIAL_HEIGHT + RandomGenerator::get().randomUniformDouble(0, 1.0) * this->HEIGHT_AMPLITUDE;
 }
 
-float PerlinNoise2D::noisePerGrid(int x, int y, int currentGridSize) const
+float PerlinNoise2D::noisePerGrid(float x, float y, int currentGridSize) const
 {
-	int x0 = x / currentGridSize * currentGridSize;
+	int x0 = int(x / currentGridSize) * currentGridSize;
 	int x1 = x0 + currentGridSize; // fara - 1 aici ca nu se intampla ce trebuie
-	int y0 = y / currentGridSize * currentGridSize;
+	int y0 = int(y / currentGridSize) * currentGridSize;
 	int y1 = y0 + currentGridSize; // fara - 1 aici ca nu se intampla ce trebuie
 
 	int seed00 = this->hashCoordinates(x0, y0);

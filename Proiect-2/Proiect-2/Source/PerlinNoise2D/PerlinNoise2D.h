@@ -32,7 +32,7 @@ private:
 	inline float fadeFunction(float t) const { return 6.0f * t * t * t * t * t - 15.0f * t * t * t * t + 10.0f * t * t * t; }
 	inline float fadeFunctionXY(float x, float y) const { return this->fadeFunction(x) * this->fadeFunction(y); }
 
-	float noisePerGrid(int x, int y, int currentGridSize) const;
+	float noisePerGrid(float x, float y, int currentGridSize) const;
 
 public:
 	static PerlinNoise2D& get();
