@@ -127,6 +127,15 @@
     <Filter Include="Resource Files\shaders\skybox">
       <UniqueIdentifier>{c16ae602-b1ff-4b52-a676-7c72cd0b82d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Source\Map">
+      <UniqueIdentifier>{c214d47b-d52e-4b9d-b278-2328a33d753a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\MapChunk">
+      <UniqueIdentifier>{a867458c-a8a9-4c40-a4cb-10041f7db4db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\PerlinNoise2D">
+      <UniqueIdentifier>{12dfe0d6-b74b-46b5-8f3a-62b1784d46cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -179,6 +188,15 @@
     </ClCompile>
     <ClCompile Include="Source\Model\Model.cpp">
       <Filter>Source Files\Source\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Map\Map.cpp">
+      <Filter>Source Files\Source\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MapChunk\MapChunk.cpp">
+      <Filter>Source Files\Source\MapChunk</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PerlinNoise2D\PerlinNoise2D.cpp">
+      <Filter>Source Files\Source\PerlinNoise2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1108,6 +1126,15 @@
     </ClInclude>
     <ClInclude Include="Source\Model\Model.h">
       <Filter>Source Files\Source\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Map\Map.h">
+      <Filter>Source Files\Source\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MapChunk\MapChunk.h">
+      <Filter>Source Files\Source\MapChunk</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PerlinNoise2D\PerlinNoise2D.h">
+      <Filter>Source Files\Source\PerlinNoise2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
