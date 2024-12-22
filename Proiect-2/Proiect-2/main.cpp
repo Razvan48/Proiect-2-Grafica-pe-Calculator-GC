@@ -20,7 +20,6 @@ const unsigned int SCR_WIDTH = 1400;
 const unsigned int SCR_HEIGHT = 800;
 
 // Camera settings
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 bool firstMouse = true;
 float lastX = static_cast<float>(SCR_WIDTH) / 2.0f;
 float lastY = static_cast<float>(SCR_HEIGHT) / 2.0f;
@@ -42,32 +41,32 @@ void updateFunction(int val)
 
 	if (keyStates['W'])
 	{
-		camera.ProcessKeyboard(FORWARD, GlobalClock::get().getDeltaTime());
+		Camera::Get().ProcessKeyboard(FORWARD, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['S'])
 	{
-		camera.ProcessKeyboard(BACKWARD, GlobalClock::get().getDeltaTime());
+		Camera::Get().ProcessKeyboard(BACKWARD, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['A'])
 	{
-		camera.ProcessKeyboard(LEFT, GlobalClock::get().getDeltaTime());
+		Camera::Get().ProcessKeyboard(LEFT, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['D'])
 	{
-		camera.ProcessKeyboard(RIGHT, GlobalClock::get().getDeltaTime());
+		Camera::Get().ProcessKeyboard(RIGHT, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['E'])
 	{
-		camera.ProcessKeyboard(UP, GlobalClock::get().getDeltaTime());
+		Camera::Get().ProcessKeyboard(UP, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['Q'])
 	{
-		camera.ProcessKeyboard(DOWN, GlobalClock::get().getDeltaTime());
+		Camera::Get().ProcessKeyboard(DOWN, GlobalClock::get().getDeltaTime());
 	}
 
 	bool redraw = keyStates['W'] || keyStates['S'] || keyStates['A'] || keyStates['D'] || keyStates['E'] || keyStates['Q'];
@@ -126,7 +125,7 @@ void processSpecialKeysDown(int key, int x, int y)
 {
 	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
 	{
-		camera.SetMovementSpeed(5.0f);
+		Camera::Get().SetMovementSpeed(5.0f);
 	}
 }
 
@@ -170,7 +169,7 @@ void processSpecialKeysUp(int key, int x, int y)
 {
 	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
 	{
-		camera.SetMovementSpeed(2.0f);
+		Camera::Get().SetMovementSpeed(2.0f);
 	}
 }
 
@@ -189,7 +188,7 @@ void processMouseInput(int xpos, int ypos)
 	if (xoffset != 0 || yoffset != 0)
 	{
 		glutWarpPointer(SCR_WIDTH / 2, SCR_HEIGHT / 2);
-		camera.ProcessMouseMovement(xoffset, yoffset);
+		Camera::Get().ProcessMouseMovement(xoffset, yoffset);
 		glutPostRedisplay();
 	}
 }
@@ -200,11 +199,13 @@ void processMouseKeys(int button, int state, int x, int y)
 	{
 		if (button == 3)
 		{
-			camera.ProcessMouseScroll(1.0);
+			Camera::Get().ProcessMouseScroll(1.0);
+			glutPostRedisplay();
 		}
 		else if (button == 4)
 		{
-			camera.ProcessMouseScroll(-1.0);
+			Camera::Get().ProcessMouseScroll(-1.0);
+			glutPostRedisplay();
 		}
 	}
 }
@@ -241,10 +242,10 @@ void RenderFunction(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Draw objects
-	donut->Render(camera, modelProgramID);
+	donut->Render(modelProgramID);
 
 	// Draw skybox as last
-	skybox->Render(camera);
+	skybox->Render();
 
 	glutSwapBuffers();
 	glFlush();

@@ -7,8 +7,6 @@
 #include <vector>
 #include <string>
 
-#include "../Source/Camera/Camera.h"
-
 class Model
 {
 public:
@@ -18,7 +16,7 @@ public:
 	// Destructor
 	~Model();
 
-	void Render(const Camera& camera, const GLuint& programId);
+	void Render(const GLuint& programId);
 
 private:
 	std::vector<glm::vec3> vertices;
