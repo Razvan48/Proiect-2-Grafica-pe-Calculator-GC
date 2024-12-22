@@ -398,3 +398,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Inlcude .obj resources
+!Proiect-2/Proiect-2/resources/**/*.obj
