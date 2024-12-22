@@ -18,11 +18,17 @@ private:
 
 	std::vector<std::vector<float>> heightMap;
 	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> uvs;
 	std::vector<GLuint> indices;
 
 	GLuint VAO;
 	GLuint VBO;
 	GLuint EBO;
+
+	glm::vec2 rotatePoint(float x, float y, float angleDegrees) const;
+
+	static const int MAX_COORDINATE_Y;
+	inline int hashCoordinates(int x, int y) const { return x * MapChunk::MAX_COORDINATE_Y + y; }
 
 public:
 	MapChunk(int x, int y);
