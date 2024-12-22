@@ -26,14 +26,16 @@ const float ZOOM = 45.0f;
 class Camera
 {
 public:
-	// Constructor with vectors
-	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
-
-	// Constructor with scalars
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
-
 	// Destructor
 	~Camera();
+
+	// Not copyable
+	Camera(const Camera&) = delete;
+	Camera& operator = (const Camera&) = delete;
+
+	// Not moveable
+	Camera(Camera&&) = delete;
+	Camera& operator = (Camera&&) = delete;
 
 	// Input
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
@@ -41,6 +43,7 @@ public:
 	void ProcessMouseScroll(float yoffset);
 
 	// Getters
+	static Camera& Get();
 	inline glm::mat4 GetViewMatrix() const { return glm::lookAt(position, position + front, up); }
 	inline float GetZoom() const { return zoom; }
 
@@ -63,6 +66,12 @@ private:
 	float movementSpeed;
 	float mouseSensitivity;
 	float zoom;
+
+	// Constructor with vectors
+	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
+
+	// Constructor with scalars
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
 	void UpdateCameraVectors();
 };

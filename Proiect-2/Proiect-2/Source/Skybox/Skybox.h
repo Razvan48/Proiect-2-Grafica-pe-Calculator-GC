@@ -16,7 +16,7 @@ public:
 	// Destructor
 	~Skybox();
 
-	void Render(const Camera& camera);
+	void Render();
 
 private:
 	static const std::vector<std::string> faces;

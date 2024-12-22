@@ -29,6 +29,12 @@ Camera::~Camera()
 	
 }
 
+Camera& Camera::Get()
+{
+	static Camera instance;
+	return instance;
+}
+
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
 	float velocity = movementSpeed * deltaTime;

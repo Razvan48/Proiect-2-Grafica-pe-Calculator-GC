@@ -9,6 +9,8 @@
 #include "loadShaders.h"
 #include "stb_image.h"
 
+#include "../Source/Camera/Camera.h"
+
 const std::vector<std::string> Skybox::faces = {
 	"resources/cubemap/posx.jpg",
 	"resources/cubemap/negx.jpg",
@@ -43,17 +45,17 @@ Skybox::~Skybox()
 	glDeleteTextures(1, &cubemapTextureID);
 }
 
-void Skybox::Render(const Camera& camera)
+void Skybox::Render()
 {
 	static const unsigned int SCR_WIDTH = 1400;		// TODO: test
 	static const unsigned int SCR_HEIGHT = 800;		// TODO: test
 
 	glUseProgram(programId);
 
-	glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+	glm::mat4 view = glm::mat4(glm::mat3(Camera::Get().GetViewMatrix())); // remove translation from the view matrix
 	glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-	glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 1000.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(Camera::Get().GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 1000.0f);
 	glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	glBindVertexArray(VAO);

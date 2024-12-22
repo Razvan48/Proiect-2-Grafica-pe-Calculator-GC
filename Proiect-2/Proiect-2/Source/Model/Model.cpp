@@ -5,6 +5,8 @@
 
 #include "objloader.h"	// TODO: de inlocuit
 
+#include "../Source/Camera/Camera.h"
+
 Model::Model(const std::string& objFilePath)
 {
 	bool model = loadOBJ("resources/donut/tor.obj", vertices, uvs, normals); // TODO: de inlocuit
@@ -39,7 +41,7 @@ Model::~Model()
 	// glDeleteTextures(1, &textureID);
 }
 
-void Model::Render(const Camera& camera, const GLuint& programId)
+void Model::Render(const GLuint& programId)
 {
 	static const unsigned int SCR_WIDTH = 1400;		// TODO: test
 	static const unsigned int SCR_HEIGHT = 800;		// TODO: test
@@ -47,11 +49,11 @@ void Model::Render(const Camera& camera, const GLuint& programId)
 	glUseProgram(programId);
 
 	// projection
-	glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 1000.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(Camera::Get().GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 1000.0f);
 	glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	// view
-	glm::mat4 view = camera.GetViewMatrix();
+	glm::mat4 view = Camera::Get().GetViewMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 	// model
