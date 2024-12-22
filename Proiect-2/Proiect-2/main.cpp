@@ -11,6 +11,7 @@
 
 #include "Source/Camera/Camera.h"
 #include "Source/Skybox/Skybox.h"
+#include "Source/Model/Model.h"
 
 // Window settings
 const unsigned int SCR_WIDTH = 1400;
@@ -27,9 +28,13 @@ float lastY = static_cast<float>(SCR_HEIGHT) / 2.0f;
 
 // Objects
 Skybox* skybox;
+Model* donut;
+
+// Shaders
+GLuint modelProgramID;
 
 // Callbacks
-void processNormalKeys(unsigned char key, int x, int y)
+void processNormalKeysDown(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
@@ -71,7 +76,7 @@ void processNormalKeys(unsigned char key, int x, int y)
 	}
 }
 
-void processSpecialKeys(int key, int x, int y)
+void processSpecialKeysDown(int key, int x, int y)
 {
 	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
 	{
@@ -96,6 +101,13 @@ void processSpecialKeysUp(int key, int x, int y)
 
 void processMouseInput(int xpos, int ypos)
 {
+	if (firstMouse)
+	{
+		firstMouse = false;
+		glutWarpPointer(SCR_WIDTH / 2, SCR_HEIGHT / 2);
+		return;
+	}
+
 	int xoffset = xpos - SCR_WIDTH / 2;
 	int yoffset = SCR_HEIGHT / 2 - ypos;
 
@@ -124,36 +136,46 @@ void processMouseKeys(int button, int state, int x, int y)
 
 void CreateShaders(void)
 {
-	// TODO
-	//ProgramId = LoadShaders("example.vert", "example.frag");
-	//glUseProgram(ProgramId);
+	modelProgramID = LoadShaders("shaders/model/model.vert", "shaders/model/model.frag");
 }
 
 void DestroyShaders(void)
 {
-	// TODO
-	//glDeleteProgram(ProgramId);
+	glDeleteProgram(modelProgramID);
 }
 
 void Initialize(void)
 {
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // culoarea de fond a ecranului
+	// Configure global opengl state
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+	// Shaders
 	CreateShaders();
 
 	// Objects
+	donut = new Model("resources/donut/tor.obj");
 	skybox = new Skybox();
 }
 
 void RenderFunction(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT);       
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Functiile de desenare
-	// TODO
+	static int i = 0;
+	std::cout << "Render " << i++ << std::endl;
+	if (i > 3) i = 0;
+
+	// Draw objects
+	donut->Render(camera, modelProgramID);
 
 	// Draw skybox as last
 	skybox->Render(camera);
 
+	glutSwapBuffers();
 	glFlush();
 }
 
@@ -163,12 +185,13 @@ void Cleanup(void)
 
 	// Objects
 	delete skybox;
+	delete donut;
 }
 
 int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	glutInitWindowPosition(100, 100); // pozitia initiala a ferestrei
 	glutInitWindowSize(SCR_WIDTH, SCR_HEIGHT);
 	glutCreateWindow("Grafica pe calculator - Proiect 2");
@@ -180,8 +203,8 @@ int main(int argc, char* argv[])
 
 	glutSetCursor(GLUT_CURSOR_NONE);
 
-	glutKeyboardFunc(processNormalKeys);
-	glutSpecialFunc(processSpecialKeys);
+	glutKeyboardFunc(processNormalKeysDown);
+	glutSpecialFunc(processSpecialKeysDown);
 	glutKeyboardUpFunc(processNormalKeysUp);
 	glutSpecialUpFunc(processSpecialKeysUp);
 	glutPassiveMotionFunc(processMouseInput);

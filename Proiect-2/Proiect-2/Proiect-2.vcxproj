@@ -181,6 +181,7 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="Source\Camera\Camera.cpp" />
     <ClCompile Include="Source\GlobalClock\GlobalClock.cpp" />
     <ClCompile Include="Source\InputManager\InputManager.cpp" />
+    <ClCompile Include="Source\Model\Model.cpp" />
     <ClCompile Include="Source\RandomGenerator\RandomGenerator.cpp" />
     <ClCompile Include="Source\Renderer\Renderer.cpp" />
     <ClCompile Include="Source\Skybox\Skybox.cpp" />
@@ -189,6 +190,7 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\imageloader.cpp" />
     <ClCompile Include="src\loadShaders.cpp" />
+    <ClCompile Include="src\objloader.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -488,12 +490,14 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="include\imageloader.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
     <ClInclude Include="include\loadShaders.h" />
+    <ClInclude Include="include\objloader.h" />
     <ClInclude Include="include\SOIL.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="Source\Application\Application.h" />
     <ClInclude Include="Source\Camera\Camera.h" />
     <ClInclude Include="Source\GlobalClock\GlobalClock.h" />
     <ClInclude Include="Source\InputManager\InputManager.h" />
+    <ClInclude Include="Source\Model\Model.h" />
     <ClInclude Include="Source\RandomGenerator\RandomGenerator.h" />
     <ClInclude Include="Source\Renderer\Renderer.h" />
     <ClInclude Include="Source\Skybox\Skybox.h" />
@@ -662,6 +666,8 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <None Include="lib\x64\GL\glew32.dll" />
     <None Include="lib\x64\GL\glew32s.dll" />
     <None Include="lib\x64\SOIL\SOIL.dll" />
+    <None Include="shaders\model\model.frag" />
+    <None Include="shaders\model\model.vert" />
     <None Include="Shaders\Skybox\skybox.frag" />
     <None Include="Shaders\Skybox\skybox.vert" />
   </ItemGroup>

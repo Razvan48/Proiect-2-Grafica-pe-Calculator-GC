@@ -10,12 +10,12 @@
 #include "stb_image.h"
 
 const std::vector<std::string> Skybox::faces = {
-	"textures/cubemap/posx.jpg",
-	"textures/cubemap/negx.jpg",
-	"textures/cubemap/posy.jpg",
-	"textures/cubemap/negy.jpg",
-	"textures/cubemap/posz.jpg",
-	"textures/cubemap/negz.jpg"
+	"resources/cubemap/posx.jpg",
+	"resources/cubemap/negx.jpg",
+	"resources/cubemap/posy.jpg",
+	"resources/cubemap/negy.jpg",
+	"resources/cubemap/posz.jpg",
+	"resources/cubemap/negz.jpg"
 };
 
 Skybox::Skybox()
@@ -27,7 +27,7 @@ Skybox::Skybox()
 
 Skybox::~Skybox()
 {
-	// delete VAO + VBO
+	// Delete VAO + VBO
 	glDisableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -39,15 +39,14 @@ Skybox::~Skybox()
 	// Delete shaders
 	glDeleteProgram(programId);
 
-	// TODO: delete texture
+	// Delete texture
+	glDeleteTextures(1, &cubemapTextureID);
 }
 
 void Skybox::Render(const Camera& camera)
 {
 	static const unsigned int SCR_WIDTH = 1400;		// TODO: test
 	static const unsigned int SCR_HEIGHT = 800;		// TODO: test
-
-	glDepthFunc(GL_LEQUAL);
 
 	glUseProgram(programId);
 
@@ -64,8 +63,6 @@ void Skybox::Render(const Camera& camera)
 
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
-
-	glDepthFunc(GL_LESS);
 }
 
 void Skybox::LoadCubemap()
@@ -153,15 +150,13 @@ void Skybox::CreateVAO()
 		 1.0f, -1.0f,  1.0f
 	};
 
-	glGenVertexArrays(1, &VBO);
-	glGenBuffers(1, &VBO);
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
+	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(VAO);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 }
-

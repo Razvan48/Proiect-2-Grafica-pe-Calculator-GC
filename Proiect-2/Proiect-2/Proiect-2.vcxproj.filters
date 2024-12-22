@@ -115,11 +115,17 @@
     <Filter Include="Source Files\Source\Skybox">
       <UniqueIdentifier>{a9bab46c-8b81-4d09-ab90-f897c3848de5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\shaders\Skybox">
-      <UniqueIdentifier>{c16ae602-b1ff-4b52-a676-7c72cd0b82d6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Source\Camera">
       <UniqueIdentifier>{afd32d81-6784-42c0-b46a-2fde9fa57c25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\Model">
+      <UniqueIdentifier>{cc18a1fe-4779-410d-bbee-a89071f9626b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\model">
+      <UniqueIdentifier>{41c85a00-7fe9-4523-ba05-cbfb83f4d603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\skybox">
+      <UniqueIdentifier>{c16ae602-b1ff-4b52-a676-7c72cd0b82d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +173,12 @@
     </ClCompile>
     <ClCompile Include="Source\Camera\Camera.cpp">
       <Filter>Source Files\Source\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\objloader.cpp">
+      <Filter>Source Files\template-built-ins\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model\Model.cpp">
+      <Filter>Source Files\Source\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1091,6 +1103,12 @@
     <ClInclude Include="include\stb_image.h">
       <Filter>Header Files\template-built-ins\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="include\objloader.h">
+      <Filter>Header Files\template-built-ins\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model\Model.h">
+      <Filter>Source Files\Source\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt">
@@ -1573,10 +1591,16 @@
       <Filter>Resource Files\template-built-ins\DLLs\64b</Filter>
     </None>
     <None Include="Shaders\Skybox\skybox.frag">
-      <Filter>Resource Files\shaders\Skybox</Filter>
+      <Filter>Resource Files\shaders\skybox</Filter>
     </None>
     <None Include="Shaders\Skybox\skybox.vert">
-      <Filter>Resource Files\shaders\Skybox</Filter>
+      <Filter>Resource Files\shaders\skybox</Filter>
+    </None>
+    <None Include="shaders\model\model.frag">
+      <Filter>Resource Files\shaders\model</Filter>
+    </None>
+    <None Include="shaders\model\model.vert">
+      <Filter>Resource Files\shaders\model</Filter>
     </None>
   </ItemGroup>
 </Project>
