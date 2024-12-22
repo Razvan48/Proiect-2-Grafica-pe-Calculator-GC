@@ -8,17 +8,16 @@
 #include "loadShaders.h"
 
 #include <iostream>
+#include <unordered_map>
 
 #include "Source/Camera/Camera.h"
 #include "Source/Skybox/Skybox.h"
 #include "Source/Model/Model.h"
+#include "Source/GlobalClock/GlobalClock.h"
 
 // Window settings
 const unsigned int SCR_WIDTH = 1400;
 const unsigned int SCR_HEIGHT = 800;
-
-// Global clock
-const float deltaTime = 0.11f; // TODO: TEST - de folosit global clock
 
 // Camera settings
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -33,39 +32,86 @@ Model* donut;
 // Shaders
 GLuint modelProgramID;
 
+// Input
+std::unordered_map<char, bool> keyStates;
+
 // Callbacks
+void updateFunction(int val)
+{
+	GlobalClock::get().update();
+
+	if (keyStates['W'])
+	{
+		camera.ProcessKeyboard(FORWARD, GlobalClock::get().getDeltaTime());
+	}
+
+	if (keyStates['S'])
+	{
+		camera.ProcessKeyboard(BACKWARD, GlobalClock::get().getDeltaTime());
+	}
+
+	if (keyStates['A'])
+	{
+		camera.ProcessKeyboard(LEFT, GlobalClock::get().getDeltaTime());
+	}
+
+	if (keyStates['D'])
+	{
+		camera.ProcessKeyboard(RIGHT, GlobalClock::get().getDeltaTime());
+	}
+
+	if (keyStates['E'])
+	{
+		camera.ProcessKeyboard(UP, GlobalClock::get().getDeltaTime());
+	}
+
+	if (keyStates['Q'])
+	{
+		camera.ProcessKeyboard(DOWN, GlobalClock::get().getDeltaTime());
+	}
+
+	bool redraw = keyStates['W'] || keyStates['S'] || keyStates['A'] || keyStates['D'] || keyStates['E'] || keyStates['Q'];
+	if (redraw)
+	{
+		glutPostRedisplay();
+	}
+
+	GlobalClock::get().update();
+	glutTimerFunc(16, updateFunction, 0);
+}
+
 void processNormalKeysDown(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
 	case 'w':
 	case 'W':
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+		keyStates['W'] = true;
 		break;
 
 	case 's':
 	case 'S':
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
+		keyStates['S'] = true;
 		break;
 
 	case 'a':
 	case 'A':
-		camera.ProcessKeyboard(LEFT, deltaTime);
+		keyStates['A'] = true;
 		break;
 
 	case 'd':
 	case 'D':
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+		keyStates['D'] = true;
 		break;
 
 	case 'e':
 	case 'E':
-		camera.ProcessKeyboard(UP, deltaTime);
+		keyStates['E'] = true;
 		break;
 
 	case 'q':
 	case 'Q':
-		camera.ProcessKeyboard(DOWN, deltaTime);
+		keyStates['Q'] = true;
 		break;
 	}
 
@@ -80,21 +126,50 @@ void processSpecialKeysDown(int key, int x, int y)
 {
 	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
 	{
-		std::cout << "SHIFT DOWN" << std::endl;
 		camera.SetMovementSpeed(5.0f);
 	}
 }
 
 void processNormalKeysUp(unsigned char key, int x, int y)
 {
-	// TODO
+	switch (key)
+	{
+	case 'w':
+	case 'W':
+		keyStates['W'] = false;
+		break;
+
+	case 's':
+	case 'S':
+		keyStates['S'] = false;
+		break;
+
+	case 'a':
+	case 'A':
+		keyStates['A'] = false;
+		break;
+
+	case 'd':
+	case 'D':
+		keyStates['D'] = false;
+		break;
+
+	case 'e':
+	case 'E':
+		keyStates['E'] = false;
+		break;
+
+	case 'q':
+	case 'Q':
+		keyStates['Q'] = false;
+		break;
+	}
 }
 
 void processSpecialKeysUp(int key, int x, int y)
 {
 	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
 	{
-		std::cout << "SHIFT UP" << std::endl;
 		camera.SetMovementSpeed(2.0f);
 	}
 }
@@ -165,10 +240,6 @@ void RenderFunction(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	static int i = 0;
-	std::cout << "Render " << i++ << std::endl;
-	if (i > 3) i = 0;
-
 	// Draw objects
 	donut->Render(camera, modelProgramID);
 
@@ -202,6 +273,8 @@ int main(int argc, char* argv[])
 	glutDisplayFunc(RenderFunction);
 
 	glutSetCursor(GLUT_CURSOR_NONE);
+
+	glutTimerFunc(16, updateFunction, 0);
 
 	glutKeyboardFunc(processNormalKeysDown);
 	glutSpecialFunc(processSpecialKeysDown);
