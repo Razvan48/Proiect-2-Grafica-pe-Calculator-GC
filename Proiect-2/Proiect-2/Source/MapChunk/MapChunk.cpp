@@ -91,7 +91,7 @@ void MapChunk::draw()
 	glActiveTexture(GL_TEXTURE0);
 
 	// set value for view matrix
-	glm::mat4 projection = glm::perspective(glm::radians(Camera::Get().GetZoom()), 1400.0f / 800.0f, 0.1f, 1000.0f);
+	glm::mat4 projection = Camera::Get().GetProjectionMatrix();
 	glm::mat4 view = Camera::Get().GetViewMatrix();
 
 	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "projection"), 1, GL_FALSE, &projection[0][0]);

@@ -15,8 +15,6 @@ private:
 	WindowManager(const WindowManager&& other) = delete;
 	WindowManager& operator= (const WindowManager&& other) = delete;
 
-	int WINDOW_WIDTH;
-	int WINDOW_HEIGHT;
 	const std::string WINDOW_TITLE;
 	int WINDOW_POS_X;
 	int WINDOW_POS_Y;
@@ -31,5 +29,8 @@ public:
 	inline std::string getWindowTitle() const { return this->WINDOW_TITLE; }
 	inline int getWindowPosX() const { return this->WINDOW_POS_X; }
 	inline int getWindowPosY() const { return this->WINDOW_POS_Y; }
+
+	static const int WINDOW_WIDTH;
+	static const int WINDOW_HEIGHT;
 };
 

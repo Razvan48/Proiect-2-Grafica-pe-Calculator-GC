@@ -47,15 +47,12 @@ Skybox::~Skybox()
 
 void Skybox::Render()
 {
-	static const unsigned int SCR_WIDTH = 1400;		// TODO: test
-	static const unsigned int SCR_HEIGHT = 800;		// TODO: test
-
 	glUseProgram(programId);
 
 	glm::mat4 view = glm::mat4(glm::mat3(Camera::Get().GetViewMatrix())); // remove translation from the view matrix
 	glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-	glm::mat4 projection = glm::perspective(glm::radians(Camera::Get().GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 1000.0f);
+	glm::mat4 projection = Camera::Get().GetProjectionMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	glBindVertexArray(VAO);

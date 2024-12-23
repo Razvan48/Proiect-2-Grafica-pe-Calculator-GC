@@ -43,13 +43,10 @@ Model::~Model()
 
 void Model::Render(const GLuint& programId)
 {
-	static const unsigned int SCR_WIDTH = 1400;		// TODO: test
-	static const unsigned int SCR_HEIGHT = 800;		// TODO: test
-
 	glUseProgram(programId);
 
 	// projection
-	glm::mat4 projection = glm::perspective(glm::radians(Camera::Get().GetZoom()), static_cast<float>(SCR_WIDTH) / static_cast<float>(SCR_HEIGHT), 0.1f, 1000.0f);
+	glm::mat4 projection = Camera::Get().GetProjectionMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	// view
@@ -57,7 +54,7 @@ void Model::Render(const GLuint& programId)
 	glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 	// model
-	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
 	glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	// Set textureDiffuse sampler2D to GL_TEXTURE0
