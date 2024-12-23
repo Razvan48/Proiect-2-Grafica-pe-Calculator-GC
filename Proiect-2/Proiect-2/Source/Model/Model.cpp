@@ -13,7 +13,7 @@ Model::Model(const std::string& objFilePath)
 
 	if (model)
 	{
-		CreateVAO();
+		createVAO();
 	}
 	else
 	{
@@ -41,7 +41,7 @@ Model::~Model()
 	// glDeleteTextures(1, &textureID);
 }
 
-void Model::Render(const GLuint& programId)
+void Model::draw(const GLuint& programId)
 {
 	glUseProgram(programId);
 
@@ -69,7 +69,7 @@ void Model::Render(const GLuint& programId)
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 }
 
-void Model::CreateVAO()
+void Model::createVAO()
 {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);

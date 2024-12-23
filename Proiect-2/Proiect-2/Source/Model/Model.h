@@ -16,7 +16,7 @@ public:
 	// Destructor
 	~Model();
 
-	void Render(const GLuint& programId);
+	void draw(const GLuint& programId);
 
 private:
 	std::vector<glm::vec3> vertices;
@@ -25,5 +25,5 @@ private:
 
 	GLuint VAO, VBO;
 
-	void CreateVAO();
+	void createVAO();
 };

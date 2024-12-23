@@ -16,7 +16,7 @@ public:
 	// Destructor
 	~Skybox();
 
-	void Render();
+	void draw();
 
 private:
 	static const std::vector<std::string> faces;
@@ -25,7 +25,7 @@ private:
 
 	GLuint VAO, VBO;
 
-	void LoadCubemap();
-	void LoadShadersSkybox();
-	void CreateVAO();
+	void loadCubemap();
+	void loadShadersSkybox();
+	void createVAO();
 };

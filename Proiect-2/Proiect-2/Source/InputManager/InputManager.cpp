@@ -11,14 +11,14 @@
 InputManager::InputManager()
 {
 	// Callbacks
-	glutKeyboardFunc(KeyboardFuncWrapper);
-	glutKeyboardUpFunc(KeyboardUpFuncWrapper);
+	glutKeyboardFunc(keyboardFuncWrapper);
+	glutKeyboardUpFunc(keyboardUpFuncWrapper);
 
-	glutSpecialFunc(SpecialFuncWrapper);
-	glutSpecialUpFunc(SpecialUpFuncWrapper);
+	glutSpecialFunc(specialFuncWrapper);
+	glutSpecialUpFunc(specialUpFuncWrapper);
 
-	glutPassiveMotionFunc(PassiveMotionFuncWrapper);
-	glutMouseFunc(MouseFuncWrapper);
+	glutPassiveMotionFunc(passiveMotionFuncWrapper);
+	glutMouseFunc(mouseFuncWrapper);
 }
 
 InputManager& InputManager::get()
@@ -71,7 +71,7 @@ void InputManager::update()
 	}
 }
 
-void InputManager::KeyboardFuncWrapper(unsigned char key, int x, int y)
+void InputManager::keyboardFuncWrapper(unsigned char key, int x, int y)
 {
 	InputManager::get().processNormalKeysDown(key, x, y);
 }
@@ -118,7 +118,7 @@ void InputManager::processNormalKeysDown(unsigned char key, int x, int y)
 	}
 }
 
-void InputManager::KeyboardUpFuncWrapper(unsigned char key, int x, int y)
+void InputManager::keyboardUpFuncWrapper(unsigned char key, int x, int y)
 {
 	InputManager::get().processNormalKeysUp(key, x, y);
 }
@@ -159,7 +159,7 @@ void InputManager::processNormalKeysUp(unsigned char key, int x, int y)
 	}
 }
 
-void InputManager::SpecialFuncWrapper(int key, int x, int y)
+void InputManager::specialFuncWrapper(int key, int x, int y)
 {
 	InputManager::get().processSpecialKeysDown(key, x, y);
 }
@@ -172,7 +172,7 @@ void InputManager::processSpecialKeysDown(int key, int x, int y)
 	}
 }
 
-void InputManager::SpecialUpFuncWrapper(int key, int x, int y)
+void InputManager::specialUpFuncWrapper(int key, int x, int y)
 {
 	InputManager::get().processSpecialKeysUp(key, x, y);
 }
@@ -185,7 +185,7 @@ void InputManager::processSpecialKeysUp(int key, int x, int y)
 	}
 }
 
-void InputManager::PassiveMotionFuncWrapper(int xpos, int ypos)
+void InputManager::passiveMotionFuncWrapper(int xpos, int ypos)
 {
 	InputManager::get().processMouseInput(xpos, ypos);
 }
@@ -214,7 +214,7 @@ void InputManager::processMouseInput(int xpos, int ypos)
 	}
 }
 
-void InputManager::MouseFuncWrapper(int button, int state, int x, int y)
+void InputManager::mouseFuncWrapper(int button, int state, int x, int y)
 {
 	InputManager::get().processMouseKeys(button, state, x, y);
 }

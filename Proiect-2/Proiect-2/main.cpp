@@ -69,10 +69,10 @@ void RenderFunction(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Draw objects
-	donut->Render(modelProgramID);
+	donut->draw(modelProgramID);
 
 	// Draw skybox as last
-	skybox->Render();
+	skybox->draw();
 
 	Map::get().draw();
 	Map::get().update(); // TODO: de mutat de aici (momentan doar sa mearga)

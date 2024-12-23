@@ -22,9 +22,9 @@ const std::vector<std::string> Skybox::faces = {
 
 Skybox::Skybox()
 {
-	LoadCubemap();
-	LoadShadersSkybox();
-	CreateVAO();
+	loadCubemap();
+	loadShadersSkybox();
+	createVAO();
 }
 
 Skybox::~Skybox()
@@ -45,7 +45,7 @@ Skybox::~Skybox()
 	glDeleteTextures(1, &cubemapTextureID);
 }
 
-void Skybox::Render()
+void Skybox::draw()
 {
 	glUseProgram(programId);
 
@@ -64,7 +64,7 @@ void Skybox::Render()
 	glBindVertexArray(0);
 }
 
-void Skybox::LoadCubemap()
+void Skybox::loadCubemap()
 {
 	glGenTextures(1, &cubemapTextureID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTextureID);
@@ -93,7 +93,7 @@ void Skybox::LoadCubemap()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-void Skybox::LoadShadersSkybox()
+void Skybox::loadShadersSkybox()
 {
 	programId = LoadShaders("shaders/skybox/skybox.vert", "shaders/skybox/skybox.frag");
 	glUseProgram(programId);
@@ -102,7 +102,7 @@ void Skybox::LoadShadersSkybox()
 	glUniform1i(glGetUniformLocation(programId, "skybox"), 0);
 }
 
-void Skybox::CreateVAO()
+void Skybox::createVAO()
 {
 	static const float vertices[] = {
 		// positions          
