@@ -38,12 +38,14 @@ std::pair<float, float> PerlinNoise2D::calculateGradient(int seed) const
 		{ 1.0f, 1.0f },
 		{ 1.0f, -1.0f },
 		{ -1.0f, 1.0f },
-		{ -1.0f, -1.0f }
+		{ -1.0f, -1.0f },
+
+		{ 0.0f, 0.0f }
 	};
 
 
 	std::pair<float, float> chosenGradient = possibleGradients[RandomGenerator::get().randomUniformInt(0, (int)possibleGradients.size() - 1)];
-	chosenGradient = std::pair<float, float>(RandomGenerator::get().randomUniformDouble(-1.0, 1.0), RandomGenerator::get().randomUniformDouble(-1.0, 1.0));
+	// chosenGradient = std::pair<float, float>(RandomGenerator::get().randomUniformDouble(-1.0, 1.0), RandomGenerator::get().randomUniformDouble(-1.0, 1.0));
 
 	// Normalization
 	float length = glm::sqrt(chosenGradient.first * chosenGradient.first + chosenGradient.second * chosenGradient.second);
