@@ -20,8 +20,8 @@
 #include "Source/Map/Map.h"
 
 // Window settings
-const unsigned int SCR_WIDTH = 1400;
-const unsigned int SCR_HEIGHT = 800;
+const unsigned int SCR_WIDTH = 1400; // TODO: use WindowManager
+const unsigned int SCR_HEIGHT = 800; // TODO: use WindowManager
 
 // Camera settings
 bool firstMouse = true;
@@ -39,6 +39,12 @@ GLuint modelProgramID;
 std::unordered_map<char, bool> keyStates;
 
 // Callbacks
+void reshapeWindow(int width, int height)
+{
+	glutReshapeWindow(SCR_WIDTH, SCR_HEIGHT);
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+}
+
 void updateFunction(int val)
 {
 	GlobalClock::get().update();
@@ -280,6 +286,7 @@ int main(int argc, char* argv[])
 
 	TextureManager::get().loadResources();
 
+	glutReshapeFunc(reshapeWindow);
 	glutDisplayFunc(RenderFunction);
 
 	glutSetCursor(GLUT_CURSOR_NONE);

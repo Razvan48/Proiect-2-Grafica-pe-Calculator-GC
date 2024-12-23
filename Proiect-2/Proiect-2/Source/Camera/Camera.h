@@ -6,6 +6,8 @@
 
 #include <vector>
 
+#include "../Source/WindowManager/WindowManager.h"
+
 enum Camera_Movement
 {
 	FORWARD,
@@ -45,8 +47,8 @@ public:
 	// Getters
 	static Camera& Get();
 	inline glm::mat4 GetViewMatrix() const { return glm::lookAt(position, position + front, up); }
+	inline glm::mat4 GetProjectionMatrix() const { return glm::perspective(glm::radians(zoom), static_cast<float>(WindowManager::WINDOW_WIDTH) / static_cast<float>(WindowManager::WINDOW_HEIGHT), 0.1f, 1000.0f); }
 	inline float GetZoom() const { return zoom; }
-
 	inline glm::vec3 GetPosition() const { return position; }
 
 	// Setters

@@ -1,12 +1,15 @@
 #include "WindowManager.h"
 
+const int WindowManager::WINDOW_WIDTH = 1400;
+const int WindowManager::WINDOW_HEIGHT = 800;
+
 WindowManager::WindowManager()
-    : WINDOW_WIDTH(1024), WINDOW_HEIGHT(768), WINDOW_TITLE("Proiect-2"), WINDOW_POS_X(100), WINDOW_POS_Y(100)
+    : WINDOW_TITLE("Proiect-2"), WINDOW_POS_X(100), WINDOW_POS_Y(100)
 {
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-    glutInitWindowSize(this->WINDOW_WIDTH, this->WINDOW_HEIGHT);
+    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutInitWindowPosition(WINDOW_POS_X, WINDOW_POS_Y);
-    glutCreateWindow(this->WINDOW_TITLE.c_str());
+    glutCreateWindow(WINDOW_TITLE.c_str());
 
     glewInit();
 
@@ -25,10 +28,8 @@ void WindowManager::reshapeFuncWrapper(int width, int height)
 
 void WindowManager::reshapeFunc(int width, int height)
 {
-    this->WINDOW_WIDTH = width;
-    this->WINDOW_HEIGHT = height;
-
-    glViewport(0, 0, this->WINDOW_WIDTH, this->WINDOW_HEIGHT);
+    glutReshapeWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 WindowManager& WindowManager::get()
