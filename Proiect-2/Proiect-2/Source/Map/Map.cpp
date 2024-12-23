@@ -21,7 +21,7 @@ Map::Map()
 
 Map::~Map()
 {
-
+	glDeleteProgram(this->programId);
 }
 
 Map& Map::get()
