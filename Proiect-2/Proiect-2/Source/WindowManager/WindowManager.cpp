@@ -2,9 +2,12 @@
 
 const int WindowManager::WINDOW_WIDTH = 1400;
 const int WindowManager::WINDOW_HEIGHT = 800;
+const std::string WindowManager::WINDOW_TITLE = "Proiect-2";
+const int WindowManager::WINDOW_POS_X = 100;
+const int WindowManager::WINDOW_POS_Y = 100;
 
 WindowManager::WindowManager()
-    : WINDOW_TITLE("Proiect-2"), WINDOW_POS_X(100), WINDOW_POS_Y(100)
+    : windowWidth(WINDOW_WIDTH), windowHeight(WINDOW_HEIGHT)
 {
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -14,6 +17,8 @@ WindowManager::WindowManager()
     glewInit();
 
     glutReshapeFunc(WindowManager::reshapeFuncWrapper);
+
+    glutSetCursor(GLUT_CURSOR_NONE);
 }
 
 WindowManager::~WindowManager()
@@ -28,8 +33,11 @@ void WindowManager::reshapeFuncWrapper(int width, int height)
 
 void WindowManager::reshapeFunc(int width, int height)
 {
-    glutReshapeWindow(WINDOW_WIDTH, WINDOW_HEIGHT);
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    windowWidth = width;
+    windowHeight = height;
+
+    glutReshapeWindow(width, height);
+    glViewport(0, 0, width, height);
 }
 
 WindowManager& WindowManager::get()
