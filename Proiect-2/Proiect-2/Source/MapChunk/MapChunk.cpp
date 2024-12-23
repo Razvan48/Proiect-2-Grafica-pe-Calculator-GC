@@ -91,11 +91,11 @@ void MapChunk::draw()
 	glActiveTexture(GL_TEXTURE0);
 
 	// set value for view matrix
-	glm::mat4 projection = Camera::Get().GetProjectionMatrix();
-	glm::mat4 view = Camera::Get().GetViewMatrix();
+	glm::mat4 projection = Camera::get().getProjectionMatrix();
+	glm::mat4 view = Camera::get().getViewMatrix();
 
 	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "projection"), 1, GL_FALSE, &projection[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "view"), 1, GL_FALSE, &Camera::Get().GetViewMatrix()[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "view"), 1, GL_FALSE, &Camera::get().getViewMatrix()[0][0]);
 
 	// set texture
 	glBindTexture(GL_TEXTURE_2D, TextureManager::get().getTexture("grass1"));

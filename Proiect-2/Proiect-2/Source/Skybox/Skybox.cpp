@@ -49,10 +49,10 @@ void Skybox::draw()
 {
 	glUseProgram(programId);
 
-	glm::mat4 view = glm::mat4(glm::mat3(Camera::Get().GetViewMatrix())); // remove translation from the view matrix
+	glm::mat4 view = glm::mat4(glm::mat3(Camera::get().getViewMatrix())); // remove translation from the view matrix
 	glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-	glm::mat4 projection = Camera::Get().GetProjectionMatrix();
+	glm::mat4 projection = Camera::get().getProjectionMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	glBindVertexArray(VAO);

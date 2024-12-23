@@ -36,32 +36,32 @@ void InputManager::update()
 {
 	if (keyStates['W'])
 	{
-		Camera::Get().ProcessKeyboard(FORWARD, GlobalClock::get().getDeltaTime());
+		Camera::get().processKeyboard(FORWARD, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['S'])
 	{
-		Camera::Get().ProcessKeyboard(BACKWARD, GlobalClock::get().getDeltaTime());
+		Camera::get().processKeyboard(BACKWARD, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['A'])
 	{
-		Camera::Get().ProcessKeyboard(LEFT, GlobalClock::get().getDeltaTime());
+		Camera::get().processKeyboard(LEFT, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['D'])
 	{
-		Camera::Get().ProcessKeyboard(RIGHT, GlobalClock::get().getDeltaTime());
+		Camera::get().processKeyboard(RIGHT, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['E'])
 	{
-		Camera::Get().ProcessKeyboard(UP, GlobalClock::get().getDeltaTime());
+		Camera::get().processKeyboard(UP, GlobalClock::get().getDeltaTime());
 	}
 
 	if (keyStates['Q'])
 	{
-		Camera::Get().ProcessKeyboard(DOWN, GlobalClock::get().getDeltaTime());
+		Camera::get().processKeyboard(DOWN, GlobalClock::get().getDeltaTime());
 	}
 
 	bool redraw = keyStates['W'] || keyStates['S'] || keyStates['A'] || keyStates['D'] || keyStates['E'] || keyStates['Q'];
@@ -168,7 +168,7 @@ void InputManager::processSpecialKeysDown(int key, int x, int y)
 {
 	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
 	{
-		Camera::Get().SetMovementSpeed(10.0f);
+		Camera::get().setMovementSpeed(10.0f);
 	}
 }
 
@@ -181,7 +181,7 @@ void InputManager::processSpecialKeysUp(int key, int x, int y)
 {
 	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
 	{
-		Camera::Get().SetMovementSpeed(5.0f);
+		Camera::get().setMovementSpeed(5.0f);
 	}
 }
 
@@ -209,7 +209,7 @@ void InputManager::processMouseInput(int xpos, int ypos)
 	if (xoffset != 0 || yoffset != 0)
 	{
 		glutWarpPointer(WindowManager::get().getWidth() / 2, WindowManager::get().getHeight() / 2);
-		Camera::Get().ProcessMouseMovement(static_cast<float>(xoffset), static_cast<float>(yoffset));
+		Camera::get().processMouseMovement(static_cast<float>(xoffset), static_cast<float>(yoffset));
 		glutPostRedisplay();
 	}
 }
@@ -225,12 +225,12 @@ void InputManager::processMouseKeys(int button, int state, int x, int y)
 	{
 		if (button == 3)
 		{
-			Camera::Get().ProcessMouseScroll(1.0);
+			Camera::get().processMouseScroll(1.0);
 			glutPostRedisplay();
 		}
 		else if (button == 4)
 		{
-			Camera::Get().ProcessMouseScroll(-1.0);
+			Camera::get().processMouseScroll(-1.0);
 			glutPostRedisplay();
 		}
 	}

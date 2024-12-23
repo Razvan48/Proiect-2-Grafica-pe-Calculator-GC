@@ -46,11 +46,11 @@ void Model::draw(const GLuint& programId)
 	glUseProgram(programId);
 
 	// projection
-	glm::mat4 projection = Camera::Get().GetProjectionMatrix();
+	glm::mat4 projection = Camera::get().getProjectionMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(programId, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	// view
-	glm::mat4 view = Camera::Get().GetViewMatrix();
+	glm::mat4 view = Camera::get().getViewMatrix();
 	glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 	// model

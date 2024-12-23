@@ -40,19 +40,19 @@ public:
 	Camera& operator = (Camera&&) = delete;
 
 	// Input
-	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
-	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
-	void ProcessMouseScroll(float yoffset);
+	void processKeyboard(Camera_Movement direction, float deltaTime);
+	void processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
+	void processMouseScroll(float yoffset);
 
 	// Getters
-	static Camera& Get();
-	inline glm::mat4 GetViewMatrix() const { return glm::lookAt(position, position + front, up); }
-	inline glm::mat4 GetProjectionMatrix() const { return glm::perspective(glm::radians(zoom), static_cast<float>(WindowManager::get().getWidth()) / static_cast<float>(WindowManager::get().getHeight()), 0.1f, 1000.0f); }
-	inline float GetZoom() const { return zoom; }
-	inline glm::vec3 GetPosition() const { return position; }
+	static Camera& get();
+	inline glm::mat4 getViewMatrix() const { return glm::lookAt(position, position + front, up); }
+	inline glm::mat4 getProjectionMatrix() const { return glm::perspective(glm::radians(zoom), static_cast<float>(WindowManager::get().getWidth()) / static_cast<float>(WindowManager::get().getHeight()), 0.1f, 1000.0f); }
+	inline float getZoom() const { return zoom; }
+	inline glm::vec3 getPosition() const { return position; }
 
 	// Setters
-	inline void SetMovementSpeed(float speed) { movementSpeed = speed; }
+	inline void setMovementSpeed(float speed) { movementSpeed = speed; }
 
 private:
 	// camera attributes
@@ -77,5 +77,5 @@ private:
 	// Constructor with scalars
 	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch);
 
-	void UpdateCameraVectors();
+	void updateCameraVectors();
 };

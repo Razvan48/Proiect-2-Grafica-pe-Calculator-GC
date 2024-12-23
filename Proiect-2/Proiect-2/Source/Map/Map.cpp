@@ -8,8 +8,8 @@ Map::Map()
 {
 	this->mapChunks.reserve((this->NUM_CHUNKS_AHEAD * 2 + 1) * (this->NUM_CHUNKS_AHEAD * 2 + 1));
 
-	int cameraChunkX = MapChunk::calculateChunkX(Camera::Get().GetPosition().x);
-	int cameraChunkY = MapChunk::calculateChunkY(Camera::Get().GetPosition().z);
+	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
+	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
 
 	for (int i = -this->NUM_CHUNKS_AHEAD; i <= this->NUM_CHUNKS_AHEAD; ++i)
 		for (int j = -this->NUM_CHUNKS_AHEAD; j <= this->NUM_CHUNKS_AHEAD; ++j)
@@ -48,8 +48,8 @@ void Map::update()
 	for (int i = 0; i < chunksAlreadyLoaded.size(); ++i)
 		chunksAlreadyLoaded[i].resize(this->NUM_CHUNKS_AHEAD * 2 + 1, false);
 
-	int cameraChunkX = MapChunk::calculateChunkX(Camera::Get().GetPosition().x);
-	int cameraChunkY = MapChunk::calculateChunkY(Camera::Get().GetPosition().z);
+	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
+	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
 
 	for (int i = 0; i < this->mapChunks.size(); ++i)
 	{

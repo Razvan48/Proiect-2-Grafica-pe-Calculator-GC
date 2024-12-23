@@ -10,7 +10,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 	this->yaw = yaw;
 	this->pitch = pitch;
 
-	UpdateCameraVectors();
+	updateCameraVectors();
 }
 
 Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
@@ -21,7 +21,7 @@ Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float u
 	this->yaw = yaw;
 	this->pitch = pitch;
 
-	UpdateCameraVectors();
+	updateCameraVectors();
 }
 
 Camera::~Camera()
@@ -29,13 +29,13 @@ Camera::~Camera()
 	
 }
 
-Camera& Camera::Get()
+Camera& Camera::get()
 {
 	static Camera instance;
 	return instance;
 }
 
-void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
+void Camera::processKeyboard(Camera_Movement direction, float deltaTime)
 {
 	float velocity = movementSpeed * deltaTime;
 
@@ -53,7 +53,7 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 		position -= worldUp * velocity;
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+void Camera::processMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
 	xoffset *= mouseSensitivity;
 	yoffset *= mouseSensitivity;
@@ -74,10 +74,10 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 		}
 	}
 
-	UpdateCameraVectors();
+	updateCameraVectors();
 }
 
-void Camera::ProcessMouseScroll(float yoffset)
+void Camera::processMouseScroll(float yoffset)
 {
 	zoom -= static_cast<float>(yoffset);
 	if (zoom < 1.0f)
@@ -90,7 +90,7 @@ void Camera::ProcessMouseScroll(float yoffset)
 	}
 }
 
-void Camera::UpdateCameraVectors()
+void Camera::updateCameraVectors()
 {
 	// Calculate the new Front vector
 	glm::vec3 newFront;
