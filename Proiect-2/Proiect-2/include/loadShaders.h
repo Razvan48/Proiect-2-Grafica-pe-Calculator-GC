@@ -1,1 +1,2 @@
-GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path);
+GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path, const char* tess_control_shader = nullptr, const char* tess_evaluation_shader = nullptr);
+GLuint LoadComputeShader(const char* compute_file_path);

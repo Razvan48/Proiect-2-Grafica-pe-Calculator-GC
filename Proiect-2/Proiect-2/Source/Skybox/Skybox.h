@@ -5,8 +5,6 @@
 #include <vector>
 #include <string>
 
-#include "../Source/Camera/Camera.h"
-
 class Skybox // TODO: mostenire din object
 {
 public:

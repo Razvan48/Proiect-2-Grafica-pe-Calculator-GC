@@ -63,12 +63,6 @@ void InputManager::update()
 	{
 		Camera::get().processKeyboard(DOWN, GlobalClock::get().getDeltaTime());
 	}
-
-	bool redraw = keyStates['W'] || keyStates['S'] || keyStates['A'] || keyStates['D'] || keyStates['E'] || keyStates['Q'];
-	if (redraw)
-	{
-		glutPostRedisplay();
-	}
 }
 
 void InputManager::keyboardFuncWrapper(unsigned char key, int x, int y)
@@ -210,7 +204,6 @@ void InputManager::processMouseInput(int xpos, int ypos)
 	{
 		glutWarpPointer(WindowManager::get().getWidth() / 2, WindowManager::get().getHeight() / 2);
 		Camera::get().processMouseMovement(static_cast<float>(xoffset), static_cast<float>(yoffset));
-		glutPostRedisplay();
 	}
 }
 
@@ -226,12 +219,10 @@ void InputManager::processMouseKeys(int button, int state, int x, int y)
 		if (button == 3)
 		{
 			Camera::get().processMouseScroll(1.0);
-			glutPostRedisplay();
 		}
 		else if (button == 4)
 		{
 			Camera::get().processMouseScroll(-1.0);
-			glutPostRedisplay();
 		}
 	}
 }

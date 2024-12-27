@@ -180,6 +180,7 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="Source\Application\Application.cpp" />
     <ClCompile Include="Source\Camera\Camera.cpp" />
     <ClCompile Include="Source\GlobalClock\GlobalClock.cpp" />
+    <ClCompile Include="Source\Grass\Grass.cpp" />
     <ClCompile Include="Source\InputManager\InputManager.cpp" />
     <ClCompile Include="Source\MapChunk\MapChunk.cpp" />
     <ClCompile Include="Source\Map\Map.cpp" />
@@ -499,6 +500,7 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="Source\Application\Application.h" />
     <ClInclude Include="Source\Camera\Camera.h" />
     <ClInclude Include="Source\GlobalClock\GlobalClock.h" />
+    <ClInclude Include="Source\Grass\Grass.h" />
     <ClInclude Include="Source\InputManager\InputManager.h" />
     <ClInclude Include="Source\MapChunk\MapChunk.h" />
     <ClInclude Include="Source\Map\Map.h" />
@@ -674,6 +676,11 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <None Include="lib\x64\SOIL\SOIL.dll" />
     <None Include="shaders\chunkMap\chunkMap.frag" />
     <None Include="shaders\chunkMap\chunkMap.vert" />
+    <None Include="shaders\grass\grass.comp" />
+    <None Include="shaders\grass\grass.frag" />
+    <None Include="shaders\grass\grass.tesc" />
+    <None Include="shaders\grass\grass.tese" />
+    <None Include="shaders\grass\grass.vert" />
     <None Include="shaders\model\model.frag" />
     <None Include="shaders\model\model.vert" />
     <None Include="Shaders\Skybox\skybox.frag" />

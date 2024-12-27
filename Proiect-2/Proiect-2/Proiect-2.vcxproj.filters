@@ -139,6 +139,12 @@
     <Filter Include="Resource Files\shaders\chunkMap">
       <UniqueIdentifier>{20a7537e-d062-4fec-b8ad-b4308b318322}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Source\Grass">
+      <UniqueIdentifier>{8e032e55-1c1e-4fd6-be21-2c0a921d345a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\grass">
+      <UniqueIdentifier>{445b7c2d-c8de-406c-b82a-4404a681d533}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -200,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="Source\PerlinNoise2D\PerlinNoise2D.cpp">
       <Filter>Source Files\Source\PerlinNoise2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Grass\Grass.cpp">
+      <Filter>Source Files\Source\Grass</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1139,6 +1148,9 @@
     <ClInclude Include="Source\PerlinNoise2D\PerlinNoise2D.h">
       <Filter>Source Files\Source\PerlinNoise2D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Grass\Grass.h">
+      <Filter>Source Files\Source\Grass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt">
@@ -1637,6 +1649,21 @@
     </None>
     <None Include="shaders\chunkMap\chunkMap.vert">
       <Filter>Resource Files\shaders\chunkMap</Filter>
+    </None>
+    <None Include="shaders\grass\grass.frag">
+      <Filter>Resource Files\shaders\grass</Filter>
+    </None>
+    <None Include="shaders\grass\grass.tesc">
+      <Filter>Resource Files\shaders\grass</Filter>
+    </None>
+    <None Include="shaders\grass\grass.tese">
+      <Filter>Resource Files\shaders\grass</Filter>
+    </None>
+    <None Include="shaders\grass\grass.vert">
+      <Filter>Resource Files\shaders\grass</Filter>
+    </None>
+    <None Include="shaders\grass\grass.comp">
+      <Filter>Resource Files\shaders\grass</Filter>
     </None>
   </ItemGroup>
 </Project>
