@@ -2,19 +2,15 @@
 
 #include "loadShaders.h"
 
+#include <iostream>
+
+#include <thread>
+
 
 Map::Map()
 	: NUM_CHUNKS_AHEAD(5)
 {
 	this->mapChunks.reserve((this->NUM_CHUNKS_AHEAD * 2 + 1) * (this->NUM_CHUNKS_AHEAD * 2 + 1));
-
-	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
-	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
-
-	for (int i = -this->NUM_CHUNKS_AHEAD; i <= this->NUM_CHUNKS_AHEAD; ++i)
-		for (int j = -this->NUM_CHUNKS_AHEAD; j <= this->NUM_CHUNKS_AHEAD; ++j)
-			if (cameraChunkX + i >= 0 && cameraChunkY + j >= 0)
-				this->mapChunks.emplace_back(cameraChunkX + i, cameraChunkY + j);
 
 	this->programId = LoadShaders("shaders/chunkMap/chunkMap.vert", "shaders/chunkMap/chunkMap.frag");
 }
@@ -32,14 +28,23 @@ Map& Map::get()
 
 void Map::draw()
 {
+	this->mapChunksMutex.lock();
+	std::cout << this->mapChunks.size() << std::endl;
 	for (int i = 0; i < this->mapChunks.size(); ++i)
+	{
+		if (!this->mapChunks[i].getOpenGLSetupDone())
+			this->mapChunks[i].setupOpenGL();
 		this->mapChunks[i].draw();
+	}
+	this->mapChunksMutex.unlock();
 }
 
 void Map::update()
 {
+	this->mapChunksMutex.lock();
 	for (int i = 0; i < this->mapChunks.size(); ++i)
 		this->mapChunks[i].update();
+	this->mapChunksMutex.unlock();
 
 
 
@@ -51,6 +56,8 @@ void Map::update()
 	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
 	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
 
+
+	this->mapChunksMutex.lock();
 	for (int i = 0; i < this->mapChunks.size(); ++i)
 	{
 		int chunkX = this->mapChunks[i].getX();
@@ -65,9 +72,43 @@ void Map::update()
 		else
 			chunksAlreadyLoaded[chunkX - cameraChunkX + this->NUM_CHUNKS_AHEAD][chunkY - cameraChunkY + this->NUM_CHUNKS_AHEAD] = true;
 	}
+	this->mapChunksMutex.unlock();
 
 	for (int i = -this->NUM_CHUNKS_AHEAD; i <= this->NUM_CHUNKS_AHEAD; ++i)
+	{
 		for (int j = -this->NUM_CHUNKS_AHEAD; j <= this->NUM_CHUNKS_AHEAD; ++j)
+		{
 			if (!chunksAlreadyLoaded[i + this->NUM_CHUNKS_AHEAD][j + this->NUM_CHUNKS_AHEAD] && cameraChunkX + i >= 0 && cameraChunkY + j >= 0)
-				this->mapChunks.emplace_back(cameraChunkX + i, cameraChunkY + j);
+			{
+				std::cout << "Loaded chunk " << cameraChunkX + i << " " << cameraChunkY + j << std::endl;
+				//this->mapChunksMutex.lock();
+				//this->mapChunks.emplace_back(cameraChunkX + i, cameraChunkY + j);
+				//this->mapChunksMutex.unlock();
+				std::thread mapChunkThread([this, cameraChunkX, cameraChunkY, i, j]()
+					{
+						MapChunk mapChunk(cameraChunkX + i, cameraChunkY + j);
+						this->addMapChunk(mapChunk);
+					});
+				mapChunkThread.detach();
+			}
+		}
+	}
 }
+
+void Map::addMapChunk(MapChunk& mapChunk)
+{
+	this->mapChunksMutex.lock();
+	bool mapChunkAlreadyLoaded = false;
+	for (int i = 0; i < this->mapChunks.size(); ++i)
+	{
+		if (this->mapChunks[i].getX() == mapChunk.getX() && this->mapChunks[i].getY() == mapChunk.getY())
+		{
+			mapChunkAlreadyLoaded = true;
+			break;
+		}
+	}
+	if (!mapChunkAlreadyLoaded)
+		this->mapChunks.push_back(std::move(mapChunk));
+	this->mapChunksMutex.unlock();
+}
+

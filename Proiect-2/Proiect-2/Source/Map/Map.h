@@ -4,6 +4,7 @@
 #include "../MapChunk/MapChunk.h"
 
 #include <vector>
+#include <mutex>
 
 class Map
 {
@@ -17,8 +18,11 @@ private:
 
 	const int NUM_CHUNKS_AHEAD;
 	std::vector<MapChunk> mapChunks;
+	std::mutex mapChunksMutex;
 
 	GLuint programId;
+
+	void addMapChunk(MapChunk& mapChunk);
 
 public:
 	static Map& get();

@@ -1,6 +1,9 @@
 #pragma once
 
+#include <vector>
 #include <utility>
+
+#include "../RandomGenerator/RandomGenerator.h"
 
 class PerlinNoise2D
 {
@@ -27,12 +30,12 @@ private:
 	const int MAX_COORDINATE_Y;
 
 	inline int hashCoordinates(int x, int y) const { return x * this->MAX_COORDINATE_Y + y; }
-	std::pair<float, float> calculateGradient(int seed) const;
-	float calculateInitialHeight(int seed) const;
+	std::pair<float, float> calculateGradient(RandomGenerator& randomGenerator, int seed) const;
+	float calculateInitialHeight(RandomGenerator& randomGenerator, int seed) const;
 	inline float fadeFunction(float t) const { return 6.0f * t * t * t * t * t - 15.0f * t * t * t * t + 10.0f * t * t * t; }
 	inline float fadeFunctionXY(float x, float y) const { return this->fadeFunction(x) * this->fadeFunction(y); }
 
-	float noisePerGrid(float x, float y, int currentGridSize) const;
+	float noisePerGrid(RandomGenerator& randomGenerator, float x, float y, int currentGridSize) const;
 
 public:
 	static PerlinNoise2D& get();

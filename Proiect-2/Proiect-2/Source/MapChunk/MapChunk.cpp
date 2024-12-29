@@ -11,7 +11,7 @@
 #include "../RandomGenerator/RandomGenerator.h"
 
 MapChunk::MapChunk(int x, int y)
-	: x(x), y(y)
+	: x(x), y(y), openGLSetupDone(false)
 {
 	float quadSize = (float)MapChunk::CHUNK_SIZE / MapChunk::NUM_QUADS_PER_SIDE;
 
@@ -25,8 +25,8 @@ MapChunk::MapChunk(int x, int y)
 	}
 
 	// TODO: de modificat in viitor, ca sa avem normale
-	RandomGenerator::get().setSeed(this->hashCoordinates(this->x, this->y));
-	float angleDegrees = RandomGenerator::get().randomUniformDouble(0, 360.0);
+	RandomGenerator randomGenerator(this->hashCoordinates(this->x, this->y));
+	float angleDegrees = randomGenerator.randomUniformDouble(0, 360.0);
 
 	for (int i = 0; i < this->heightMap.size(); ++i)
 	{
@@ -54,8 +54,10 @@ MapChunk::MapChunk(int x, int y)
 			this->indices.push_back(i * this->heightMap[i].size() + j - 1);
 		}
 	}
+}
 
-
+void MapChunk::setupOpenGL()
+{
 	glGenVertexArrays(1, &this->VAO);
 	glGenBuffers(1, &this->VBO);
 	glGenBuffers(1, &this->EBO);
@@ -75,13 +77,55 @@ MapChunk::MapChunk(int x, int y)
 	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);
+
+	this->openGLSetupDone = true;
+}
+
+MapChunk::MapChunk(MapChunk&& other) noexcept
+	: x(other.x), y(other.y)
+	, heightMap(std::move(other.heightMap))
+	, vertices(std::move(other.vertices))
+	, uvs(std::move(other.uvs))
+	, indices(std::move(other.indices))
+	, VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
+	, openGLSetupDone(other.openGLSetupDone)
+{
+	other.VAO = 0;
+	other.VBO = 0;
+	other.EBO = 0;
+}
+
+MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
+{
+	if (this == &other)
+		return *this;
+
+	this->x = other.x;
+	this->y = other.y;
+	this->heightMap = std::move(other.heightMap);
+	this->vertices = std::move(other.vertices);
+	this->uvs = std::move(other.uvs);
+	this->indices = std::move(other.indices);
+	this->VAO = other.VAO;
+	this->VBO = other.VBO;
+	this->EBO = other.EBO;
+	this->openGLSetupDone = other.openGLSetupDone;
+
+	other.VAO = 0;
+	other.VBO = 0;
+	other.EBO = 0;
+
+	return *this;
 }
 
 MapChunk::~MapChunk()
 {
-	glDeleteVertexArrays(1, &this->VAO);
-	glDeleteBuffers(1, &this->VBO);
-	glDeleteBuffers(1, &this->EBO);
+	if (this->VAO)
+		glDeleteVertexArrays(1, &this->VAO);
+	if (this->VBO)
+		glDeleteBuffers(1, &this->VBO);
+	if (this->EBO)
+		glDeleteBuffers(1, &this->EBO);
 }
 
 void MapChunk::draw()

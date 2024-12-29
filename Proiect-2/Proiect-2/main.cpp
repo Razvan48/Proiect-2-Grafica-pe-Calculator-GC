@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+#include <thread>
+
 #include "Source/WindowManager/WindowManager.h"
 #include "Source/InputManager/InputManager.h"
 #include "Source/TextureManager/TextureManager.h"

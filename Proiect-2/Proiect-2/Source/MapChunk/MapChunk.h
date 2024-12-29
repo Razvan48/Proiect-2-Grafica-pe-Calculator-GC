@@ -25,6 +25,8 @@ private:
 	GLuint VBO;
 	GLuint EBO;
 
+	bool openGLSetupDone;
+
 	glm::vec2 rotatePoint(float x, float y, float angleDegrees) const;
 
 	static const int MAX_COORDINATE_Y;
@@ -32,7 +34,12 @@ private:
 
 public:
 	MapChunk(int x, int y);
+	MapChunk(const MapChunk& other) = delete;
+	MapChunk& operator= (const MapChunk& other) = delete;
+	MapChunk(MapChunk&& other) noexcept;
+	MapChunk& operator= (MapChunk&& other) noexcept;
 	~MapChunk();
+	void setupOpenGL();
 
 	inline int getX() const { return x; }
 	inline int getY() const { return y; }
@@ -42,4 +49,6 @@ public:
 
 	static int calculateChunkX(float x);
 	static int calculateChunkY(float y);
+
+	inline bool getOpenGLSetupDone() const { return this->openGLSetupDone; }
 };

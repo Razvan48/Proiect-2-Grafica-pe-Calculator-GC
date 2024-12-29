@@ -7,15 +7,16 @@ RandomGenerator::RandomGenerator()
 	this->generator.seed(this->seed);
 }
 
+RandomGenerator::RandomGenerator(int seed)
+	: seed(seed)
+{
+	this->generator = std::mt19937(std::random_device()());
+	this->generator.seed(this->seed);
+}
+
 RandomGenerator::~RandomGenerator()
 {
 
-}
-
-RandomGenerator& RandomGenerator::get()
-{
-	static RandomGenerator instance;
-	return instance;
 }
 
 void RandomGenerator::setSeed(int seed)

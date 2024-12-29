@@ -5,18 +5,14 @@
 class RandomGenerator
 {
 private:
-	RandomGenerator();
-	~RandomGenerator();
-	RandomGenerator(const RandomGenerator& other) = delete;
-	RandomGenerator& operator= (const RandomGenerator& other) = delete;
-	RandomGenerator(const RandomGenerator&& other) = delete;
-	RandomGenerator& operator= (const RandomGenerator&& other) = delete;
 
 	int seed;
 	std::mt19937 generator;
 
 public:
-	static RandomGenerator& get();
+	RandomGenerator();
+	RandomGenerator(int seed);
+	~RandomGenerator();
 
 	void setSeed(int seed);
 

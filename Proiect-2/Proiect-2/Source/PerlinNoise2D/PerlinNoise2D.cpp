@@ -1,7 +1,5 @@
 #include "PerlinNoise2D.h"
 
-#include "../RandomGenerator/RandomGenerator.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -25,9 +23,9 @@ PerlinNoise2D& PerlinNoise2D::get()
 	return instance;
 }
 
-std::pair<float, float> PerlinNoise2D::calculateGradient(int seed) const
+std::pair<float, float> PerlinNoise2D::calculateGradient(RandomGenerator& randomGenerator, int seed) const
 {
-	RandomGenerator::get().setSeed(seed);
+	randomGenerator.setSeed(seed);
 
 	std::vector<std::pair<float, float>> possibleGradients = {
 		{ 0.0f, 1.0f },
@@ -44,8 +42,8 @@ std::pair<float, float> PerlinNoise2D::calculateGradient(int seed) const
 	};
 
 
-	std::pair<float, float> chosenGradient = possibleGradients[RandomGenerator::get().randomUniformInt(0, (int)possibleGradients.size() - 1)];
-	// chosenGradient = std::pair<float, float>(RandomGenerator::get().randomUniformDouble(-1.0, 1.0), RandomGenerator::get().randomUniformDouble(-1.0, 1.0));
+	std::pair<float, float> chosenGradient = possibleGradients[randomGenerator.randomUniformInt(0, (int)possibleGradients.size() - 1)];
+	// chosenGradient = std::pair<float, float>(randomGenerator.randomUniformDouble(-1.0, 1.0), randomGenerator.randomUniformDouble(-1.0, 1.0));
 
 	// Normalization
 	float length = glm::sqrt(chosenGradient.first * chosenGradient.first + chosenGradient.second * chosenGradient.second);
@@ -59,13 +57,13 @@ std::pair<float, float> PerlinNoise2D::calculateGradient(int seed) const
 	return chosenGradient;
 }
 
-float PerlinNoise2D::calculateInitialHeight(int seed) const
+float PerlinNoise2D::calculateInitialHeight(RandomGenerator& randomGenerator, int seed) const
 {
-	RandomGenerator::get().setSeed(seed);
-	return this->DEFAULT_INITIAL_HEIGHT + RandomGenerator::get().randomUniformDouble(0, 1.0) * this->HEIGHT_AMPLITUDE;
+	randomGenerator.setSeed(seed);
+	return this->DEFAULT_INITIAL_HEIGHT + randomGenerator.randomUniformDouble(0, 1.0) * this->HEIGHT_AMPLITUDE;
 }
 
-float PerlinNoise2D::noisePerGrid(float x, float y, int currentGridSize) const
+float PerlinNoise2D::noisePerGrid(RandomGenerator& randomGenerator, float x, float y, int currentGridSize) const
 {
 	int x0 = int(x / currentGridSize) * currentGridSize;
 	int x1 = x0 + currentGridSize; // fara - 1 aici ca nu se intampla ce trebuie
@@ -77,10 +75,10 @@ float PerlinNoise2D::noisePerGrid(float x, float y, int currentGridSize) const
 	int seed10 = this->hashCoordinates(x1, y0);
 	int seed11 = this->hashCoordinates(x1, y1);
 
-	std::pair<float, float> gradient00 = this->calculateGradient(seed00);
-	std::pair<float, float> gradient01 = this->calculateGradient(seed01);
-	std::pair<float, float> gradient10 = this->calculateGradient(seed10);
-	std::pair<float, float> gradient11 = this->calculateGradient(seed11);
+	std::pair<float, float> gradient00 = this->calculateGradient(randomGenerator, seed00);
+	std::pair<float, float> gradient01 = this->calculateGradient(randomGenerator, seed01);
+	std::pair<float, float> gradient10 = this->calculateGradient(randomGenerator, seed10);
+	std::pair<float, float> gradient11 = this->calculateGradient(randomGenerator, seed11);
 
 	std::pair<float, float> dist00 = { x - x0, y - y0 };
 	std::pair<float, float> dist01 = { x - x0, y - y1 };
@@ -97,10 +95,10 @@ float PerlinNoise2D::noisePerGrid(float x, float y, int currentGridSize) const
 	float dot10 = gradient10.first * dist10Norm.first + gradient10.second * dist10Norm.second;
 	float dot11 = gradient11.first * dist11Norm.first + gradient11.second * dist11Norm.second;
 
-	float dot00Added = dot00 + this->calculateInitialHeight(seed00);
-	float dot01Added = dot01 + this->calculateInitialHeight(seed01);
-	float dot10Added = dot10 + this->calculateInitialHeight(seed10);
-	float dot11Added = dot11 + this->calculateInitialHeight(seed11);
+	float dot00Added = dot00 + this->calculateInitialHeight(randomGenerator, seed00);
+	float dot01Added = dot01 + this->calculateInitialHeight(randomGenerator, seed01);
+	float dot10Added = dot10 + this->calculateInitialHeight(randomGenerator, seed10);
+	float dot11Added = dot11 + this->calculateInitialHeight(randomGenerator, seed11);
 
 	float fade00 = this->fadeFunctionXY(1.0f - dist00Norm.first, 1.0f - dist00Norm.second);
 	float fade01 = this->fadeFunctionXY(1.0f - dist01Norm.first, 1.0f + dist01Norm.second);
@@ -113,13 +111,15 @@ float PerlinNoise2D::noisePerGrid(float x, float y, int currentGridSize) const
 
 float PerlinNoise2D::perlinNoise2D(float x, float y) const
 {
+	RandomGenerator randomGenerator;
+
 	int currentGridSize = this->INITIAL_GRID_SIZE;
 	float currentAmplitude = this->INITIAL_AMPLITUDE;
 	float output = this->STARTING_VALUE;
 
 	for (int i = 0; i < this->NUM_OCTAVES; ++i)
 	{
-		output += (currentAmplitude * this->noisePerGrid(x, y, currentGridSize));
+		output += (currentAmplitude * this->noisePerGrid(randomGenerator, x, y, currentGridSize));
 
 		currentGridSize *= this->GRID_MULTIPLIER;
 		currentAmplitude *= this->AMPLITUDE_DIMINISHMENT;
