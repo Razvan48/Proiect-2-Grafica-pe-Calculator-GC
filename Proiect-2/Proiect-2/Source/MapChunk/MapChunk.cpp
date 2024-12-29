@@ -132,6 +132,38 @@ glm::vec2 MapChunk::rotatePoint(float x, float y, float angleDegrees) const
 	return glm::vec2(rotatedX, rotatedY);
 }
 
+glm::vec2 MapChunk::getMinXZ() const
+{
+	glm::vec2 result = glm::vec2(0.0f, 0.0f);
+	if (!vertices.empty())
+	{
+		result.x = vertices[0].x;
+		result.y = vertices[0].z;
+	}
+	for (size_t i = 0;i < vertices.size(); ++i)
+	{
+		result.x = std::min(result.x, vertices[i].x);
+		result.y = std::min(result.y, vertices[i].z);
+	}
+	return result;
+}
+
+glm::vec2 MapChunk::getMaxXZ() const
+{
+	glm::vec2 result = glm::vec2(0.0f, 0.0f);
+	if (!vertices.empty())
+	{
+		result.x = vertices[0].x;
+		result.y = vertices[0].z;
+	}
+	for (size_t i = 0;i < vertices.size(); ++i)
+	{
+		result.x = std::max(result.x, vertices[i].x);
+		result.y = std::max(result.y, vertices[i].z);
+	}
+	return result;
+}
+
 const int MapChunk::CHUNK_SIZE = 16;
 const int MapChunk::NUM_QUADS_PER_SIDE = 32;
 const int MapChunk::MAX_COORDINATE_Y = 666013;

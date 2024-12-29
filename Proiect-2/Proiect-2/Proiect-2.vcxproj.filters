@@ -139,6 +139,18 @@
     <Filter Include="Resource Files\shaders\chunkMap">
       <UniqueIdentifier>{20a7537e-d062-4fec-b8ad-b4308b318322}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Source\Water">
+      <UniqueIdentifier>{efa9ad13-4ca5-4a55-bcd8-64e9a3149353}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Source\WaterTesters">
+      <UniqueIdentifier>{67e85cd8-fbfb-4b7a-9c8c-4a877bc799bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\water">
+      <UniqueIdentifier>{9445e852-b7e3-440e-ab8b-20a4d5f1a779}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\waterTesters">
+      <UniqueIdentifier>{275fc171-bddb-48d6-898e-f21d793fc9b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -200,6 +212,15 @@
     </ClCompile>
     <ClCompile Include="Source\PerlinNoise2D\PerlinNoise2D.cpp">
       <Filter>Source Files\Source\PerlinNoise2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Water\Water.cpp">
+      <Filter>Source Files\Source\Water</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WaterTesters\textureRect.cpp">
+      <Filter>Source Files\Source\WaterTesters</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Water\WaterFrameBuffers.cpp">
+      <Filter>Source Files\Source\Water</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1139,6 +1160,15 @@
     <ClInclude Include="Source\PerlinNoise2D\PerlinNoise2D.h">
       <Filter>Source Files\Source\PerlinNoise2D</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Water\Water.h">
+      <Filter>Source Files\Source\Water</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WaterTesters\textureRect.h">
+      <Filter>Source Files\Source\WaterTesters</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Water\WaterFrameBuffers.h">
+      <Filter>Source Files\Source\Water</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt">
@@ -1637,6 +1667,18 @@
     </None>
     <None Include="shaders\chunkMap\chunkMap.vert">
       <Filter>Resource Files\shaders\chunkMap</Filter>
+    </None>
+    <None Include="shaders\water\water.frag">
+      <Filter>Resource Files\shaders\water</Filter>
+    </None>
+    <None Include="shaders\water\water.vert">
+      <Filter>Resource Files\shaders\water</Filter>
+    </None>
+    <None Include="shaders\waterTesters\textureRect.frag">
+      <Filter>Resource Files\shaders\waterTesters</Filter>
+    </None>
+    <None Include="shaders\waterTesters\textureRect.vert">
+      <Filter>Resource Files\shaders\waterTesters</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -17,6 +17,7 @@ public:
 	~Skybox();
 
 	void draw();
+	inline GLuint getProgramId() const { return programId; }
 
 private:
 	static const std::vector<std::string> faces;

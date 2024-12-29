@@ -42,4 +42,7 @@ public:
 
 	static int calculateChunkX(float x);
 	static int calculateChunkY(float y);
+
+	glm::vec2 getMinXZ() const;
+	glm::vec2 getMaxXZ() const;
 };

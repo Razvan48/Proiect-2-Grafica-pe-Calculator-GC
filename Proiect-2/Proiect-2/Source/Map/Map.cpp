@@ -71,3 +71,36 @@ void Map::update()
 			if (!chunksAlreadyLoaded[i + this->NUM_CHUNKS_AHEAD][j + this->NUM_CHUNKS_AHEAD] && cameraChunkX + i >= 0 && cameraChunkY + j >= 0)
 				this->mapChunks.emplace_back(cameraChunkX + i, cameraChunkY + j);
 }
+
+
+glm::vec2 Map::getMinXZ() const
+{
+	glm::vec2 result = glm::vec2(0.0f, 0.0f);
+	if (!mapChunks.empty())
+	{
+		result.x = mapChunks[0].getX();
+		result.y = mapChunks[0].getY();
+	}
+	for (size_t i = 0;i < mapChunks.size(); ++i)
+	{
+		result.x = std::min(result.x, mapChunks[i].getMinXZ().x);
+		result.y = std::min(result.y, mapChunks[i].getMinXZ().y);
+	}
+	return result;
+}
+
+glm::vec2 Map::getMaxXZ() const
+{
+	glm::vec2 result = glm::vec2(0.0f, 0.0f);
+	if (!mapChunks.empty())
+	{
+		result.x = mapChunks[0].getX();
+		result.y = mapChunks[0].getY();
+	}
+	for (size_t i = 0;i < mapChunks.size(); ++i)
+	{
+		result.x = std::max(result.x, mapChunks[i].getMinXZ().x);
+		result.y = std::max(result.y, mapChunks[i].getMinXZ().y);
+	}
+	return result;
+}

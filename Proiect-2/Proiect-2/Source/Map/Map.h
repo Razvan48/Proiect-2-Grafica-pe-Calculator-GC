@@ -27,4 +27,8 @@ public:
 	void update();
 
 	inline GLuint getProgramId() const { return programId; }
+
+	// for water 
+	glm::vec2 getMinXZ() const;
+	glm::vec2 getMaxXZ() const;
 };
