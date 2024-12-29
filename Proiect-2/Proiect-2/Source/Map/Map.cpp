@@ -2,13 +2,11 @@
 
 #include "loadShaders.h"
 
-#include <iostream>
-
 #include <thread>
 
 
 Map::Map()
-	: NUM_CHUNKS_AHEAD(5)
+	: NUM_CHUNKS_AHEAD(9)
 {
 	this->mapChunks.reserve((this->NUM_CHUNKS_AHEAD * 2 + 1) * (this->NUM_CHUNKS_AHEAD * 2 + 1));
 
@@ -29,11 +27,13 @@ Map& Map::get()
 void Map::draw()
 {
 	this->mapChunksMutex.lock();
-	std::cout << this->mapChunks.size() << std::endl;
 	for (int i = 0; i < this->mapChunks.size(); ++i)
 	{
 		if (!this->mapChunks[i].getOpenGLSetupDone())
+		{
 			this->mapChunks[i].setupOpenGL();
+			break;
+		}
 		this->mapChunks[i].draw();
 	}
 	this->mapChunksMutex.unlock();
@@ -80,10 +80,6 @@ void Map::update()
 		{
 			if (!chunksAlreadyLoaded[i + this->NUM_CHUNKS_AHEAD][j + this->NUM_CHUNKS_AHEAD] && cameraChunkX + i >= 0 && cameraChunkY + j >= 0)
 			{
-				std::cout << "Loaded chunk " << cameraChunkX + i << " " << cameraChunkY + j << std::endl;
-				//this->mapChunksMutex.lock();
-				//this->mapChunks.emplace_back(cameraChunkX + i, cameraChunkY + j);
-				//this->mapChunksMutex.unlock();
 				std::thread mapChunkThread([this, cameraChunkX, cameraChunkY, i, j]()
 					{
 						MapChunk mapChunk(cameraChunkX + i, cameraChunkY + j);

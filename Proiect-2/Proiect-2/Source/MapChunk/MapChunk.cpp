@@ -176,6 +176,6 @@ glm::vec2 MapChunk::rotatePoint(float x, float y, float angleDegrees) const
 	return glm::vec2(rotatedX, rotatedY);
 }
 
-const int MapChunk::CHUNK_SIZE = 16;
-const int MapChunk::NUM_QUADS_PER_SIDE = 32;
+const int MapChunk::CHUNK_SIZE = 48;
+const int MapChunk::NUM_QUADS_PER_SIDE = 16;
 const int MapChunk::MAX_COORDINATE_Y = 666013;
