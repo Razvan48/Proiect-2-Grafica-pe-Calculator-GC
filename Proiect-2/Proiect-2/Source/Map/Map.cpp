@@ -1,12 +1,15 @@
 #include "Map.h"
 
 #include "loadShaders.h"
+#include "../GlobalClock/GlobalClock.h"
 
 #include <thread>
 
 
 Map::Map()
 	: NUM_CHUNKS_AHEAD(9)
+	, lastTimeLoadedOpenGL(0.0f)
+	, TIME_BETWEEN_OPENGL_LOADS(1.0f / 30.0f)
 {
 	this->mapChunks.reserve((this->NUM_CHUNKS_AHEAD * 2 + 1) * (this->NUM_CHUNKS_AHEAD * 2 + 1));
 
@@ -31,7 +34,11 @@ void Map::draw()
 	{
 		if (!this->mapChunks[i].getOpenGLSetupDone())
 		{
-			this->mapChunks[i].setupOpenGL();
+			if (GlobalClock::get().getCurrentTime() - this->lastTimeLoadedOpenGL > this->TIME_BETWEEN_OPENGL_LOADS)
+			{
+				this->mapChunks[i].setupOpenGL();
+				this->lastTimeLoadedOpenGL = GlobalClock::get().getCurrentTime();
+			}
 			break;
 		}
 		this->mapChunks[i].draw();

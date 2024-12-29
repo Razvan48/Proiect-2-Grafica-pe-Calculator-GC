@@ -24,6 +24,9 @@ private:
 
 	void addMapChunk(MapChunk& mapChunk);
 
+	float lastTimeLoadedOpenGL;
+	const float TIME_BETWEEN_OPENGL_LOADS;
+
 public:
 	static Map& get();
 
