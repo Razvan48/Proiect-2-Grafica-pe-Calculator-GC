@@ -32,6 +32,9 @@ private:
 	static const int MAX_COORDINATE_Y;
 	inline int hashCoordinates(int x, int y) const { return x * MapChunk::MAX_COORDINATE_Y + y; }
 
+	static const float DELTA_CULLING_SHADOW_MAPPING;
+	static const float INF_HEIGHT;
+
 public:
 	MapChunk(int x, int y);
 	MapChunk(const MapChunk& other) = delete;

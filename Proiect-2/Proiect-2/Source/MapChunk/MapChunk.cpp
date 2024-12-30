@@ -15,16 +15,21 @@ MapChunk::MapChunk(int x, int y)
 {
 	float quadSize = (float)MapChunk::CHUNK_SIZE / MapChunk::NUM_QUADS_PER_SIDE;
 
+	float minimumHeight = MapChunk::INF_HEIGHT;
 	this->heightMap.resize(MapChunk::NUM_QUADS_PER_SIDE + 1);
 	for (int i = 0; i < this->heightMap.size(); ++i)
 	{
 		this->heightMap[i].resize(MapChunk::NUM_QUADS_PER_SIDE + 1);
 
 		for (int j = 0; j < this->heightMap[i].size(); ++j)
-			this->heightMap[i][j] = PerlinNoise2D::get().perlinNoise2D(this->x * MapChunk::CHUNK_SIZE + i * quadSize, this->y * MapChunk::CHUNK_SIZE + j * quadSize);
+		{
+			this->heightMap[i][j] = PerlinNoise2D::get().perlinNoise2D(this->x * MapChunk::CHUNK_SIZE + j * quadSize, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize);
+			minimumHeight = glm::min(minimumHeight, this->heightMap[i][j]);
+		}
 	}
+	minimumHeight -= MapChunk::DELTA_CULLING_SHADOW_MAPPING;
 
-	// TODO: de modificat in viitor, ca sa avem normale
+	// TODO: de modificat in viitor, ca sa avem normale (inclusiv la cele 4 for-uri trebuie normale) + schimbare in vertex attributes + in shader
 	RandomGenerator randomGenerator(this->hashCoordinates(this->x, this->y));
 	float angleDegrees = randomGenerator.randomUniformDouble(0, 360.0);
 
@@ -32,15 +37,55 @@ MapChunk::MapChunk(int x, int y)
 	{
 		for (int j = 0; j < this->heightMap[i].size(); ++j)
 		{
-			this->vertices.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + i * quadSize, this->heightMap[i][j], this->y * MapChunk::CHUNK_SIZE + j * quadSize));
+			this->vertices.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, this->heightMap[i][j], (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
 
-			float uvX = (float)i / MapChunk::NUM_QUADS_PER_SIDE;
-			float uvY = (float)j / MapChunk::NUM_QUADS_PER_SIDE;
+			float uvX = (float)j / MapChunk::NUM_QUADS_PER_SIDE;
+			float uvY = 1.0f - (float)i / MapChunk::NUM_QUADS_PER_SIDE;
 
 			this->uvs.emplace_back(this->rotatePoint(uvX, uvY, angleDegrees));
 		}
 	}
 
+	// trebuie normale si aici
+	// ordine: sus, jos, stanga, dreapta
+	for (int j = 0; j < MapChunk::NUM_QUADS_PER_SIDE + 1; ++j)
+	{
+		this->vertices.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, minimumHeight, 1.0f * (this->y + 1) * MapChunk::CHUNK_SIZE));
+
+		float uvX = (float)j / MapChunk::NUM_QUADS_PER_SIDE;	
+		float uvY = 1.0f;
+
+		this->uvs.emplace_back(this->rotatePoint(uvX, uvY, angleDegrees));
+	}
+	for (int j = 0; j < MapChunk::NUM_QUADS_PER_SIDE + 1; ++j)
+	{
+		this->vertices.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, minimumHeight, 1.0f * this->y * MapChunk::CHUNK_SIZE));
+
+		float uvX = (float)j / MapChunk::NUM_QUADS_PER_SIDE;
+		float uvY = 0.0f;
+
+		this->uvs.emplace_back(this->rotatePoint(uvX, uvY, angleDegrees));
+	}
+	for (int i = 0; i < MapChunk::NUM_QUADS_PER_SIDE + 1; ++i)
+	{
+		this->vertices.push_back(glm::vec3(1.0f * this->x * MapChunk::CHUNK_SIZE, minimumHeight, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
+
+		float uvX = 0.0f;
+		float uvY = 1.0f - (float)i / MapChunk::NUM_QUADS_PER_SIDE;
+
+		this->uvs.emplace_back(this->rotatePoint(uvX, uvY, angleDegrees));
+	}
+	for (int i = 0; i < MapChunk::NUM_QUADS_PER_SIDE + 1; ++i)
+	{
+		this->vertices.push_back(glm::vec3(1.0f * (this->x + 1) * MapChunk::CHUNK_SIZE, minimumHeight, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
+
+		float uvX = 1.0f;
+		float uvY = 1.0f - (float)i / MapChunk::NUM_QUADS_PER_SIDE;
+
+		this->uvs.emplace_back(this->rotatePoint(uvX, uvY, angleDegrees));
+	}
+
+	// Indices
 	for (int i = 1; i < this->heightMap.size(); ++i)
 	{
 		for (int j = 1; j < this->heightMap[i].size(); ++j)
@@ -54,6 +99,67 @@ MapChunk::MapChunk(int x, int y)
 			this->indices.push_back(i * this->heightMap[i].size() + j - 1);
 		}
 	}
+	// sus
+	for (int j = 1; j < MapChunk::NUM_QUADS_PER_SIDE + 1; ++j)
+	{
+		int i = 0;
+
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j - 1);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j - 1);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j - 1);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+	}
+	// jos
+	for (int j = 1; j < MapChunk::NUM_QUADS_PER_SIDE + 1; ++j)
+	{
+		int i = MapChunk::NUM_QUADS_PER_SIDE;
+
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j - 1);
+
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j - 1);
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + (MapChunk::NUM_QUADS_PER_SIDE + 1) + j - 1);
+	}
+	// stanga
+	for (int i = 1; i < MapChunk::NUM_QUADS_PER_SIDE + 1; ++i)
+	{
+		int j = 0;
+
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 2 * (MapChunk::NUM_QUADS_PER_SIDE + 1) + i);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+		this->indices.push_back((i - 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 2 * (MapChunk::NUM_QUADS_PER_SIDE + 1) + i);
+		this->indices.push_back((i - 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 2 * (MapChunk::NUM_QUADS_PER_SIDE + 1) + i - 1);
+	}
+	// dreapta
+	for (int i = 1; i < MapChunk::NUM_QUADS_PER_SIDE + 1; ++i)
+	{
+		int j = MapChunk::NUM_QUADS_PER_SIDE;
+
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 3 * (MapChunk::NUM_QUADS_PER_SIDE + 1) + i - 1);
+		this->indices.push_back((i - 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 3 * (MapChunk::NUM_QUADS_PER_SIDE + 1) + i - 1);
+		this->indices.push_back(i * (MapChunk::NUM_QUADS_PER_SIDE + 1) + j);
+		this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 3 * (MapChunk::NUM_QUADS_PER_SIDE + 1) + i);
+	}
+
+	// fata de jos
+	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + (MapChunk::NUM_QUADS_PER_SIDE + 1));
+	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1));
+	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 3 * (MapChunk::NUM_QUADS_PER_SIDE + 1));
+
+	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + (MapChunk::NUM_QUADS_PER_SIDE + 1));
+	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 3 * (MapChunk::NUM_QUADS_PER_SIDE + 1));
+	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 4 * (MapChunk::NUM_QUADS_PER_SIDE + 1) - 1);
 }
 
 void MapChunk::setupOpenGL()
@@ -143,7 +249,16 @@ void MapChunk::draw()
 
 	// draw
 	glBindVertexArray(this->VAO);
+
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // test
+	// cull front
+	glFrontFace(GL_CW);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+	glDisable(GL_CULL_FACE);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // test
+
 	glBindVertexArray(0);
 
 	glUseProgram(0);
@@ -179,3 +294,6 @@ glm::vec2 MapChunk::rotatePoint(float x, float y, float angleDegrees) const
 const int MapChunk::CHUNK_SIZE = 48;
 const int MapChunk::NUM_QUADS_PER_SIDE = 16;
 const int MapChunk::MAX_COORDINATE_Y = 666013;
+
+const float MapChunk::DELTA_CULLING_SHADOW_MAPPING = 1.0f;
+const float MapChunk::INF_HEIGHT = 1000000.0f;
