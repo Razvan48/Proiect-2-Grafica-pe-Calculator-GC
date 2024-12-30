@@ -18,6 +18,7 @@ private:
 
 	std::vector<std::vector<float>> heightMap;
 	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec3> normals;
 	std::vector<glm::vec2> uvs;
 	std::vector<GLuint> indices;
 

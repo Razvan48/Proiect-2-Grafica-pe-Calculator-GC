@@ -29,7 +29,6 @@ MapChunk::MapChunk(int x, int y)
 	}
 	minimumHeight -= MapChunk::DELTA_CULLING_SHADOW_MAPPING;
 
-	// TODO: de modificat in viitor, ca sa avem normale (inclusiv la cele 4 for-uri trebuie normale) + schimbare in vertex attributes + in shader
 	RandomGenerator randomGenerator(this->hashCoordinates(this->x, this->y));
 	float angleDegrees = randomGenerator.randomUniformDouble(0, 360.0);
 
@@ -38,6 +37,55 @@ MapChunk::MapChunk(int x, int y)
 		for (int j = 0; j < this->heightMap[i].size(); ++j)
 		{
 			this->vertices.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, this->heightMap[i][j], (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
+
+			// calcul pentru normale // TODO: de vazut daca aceste calcule sunt corecte
+			float leftHeight;
+			if (j == 0)
+			{
+				leftHeight = PerlinNoise2D::get().perlinNoise2D(this->x * MapChunk::CHUNK_SIZE - quadSize, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize);
+			}
+			else
+				leftHeight = this->heightMap[i][j - 1];
+
+			float rightHeight;
+			if (j == MapChunk::NUM_QUADS_PER_SIDE)
+			{
+				rightHeight = PerlinNoise2D::get().perlinNoise2D((this->x + 1) * MapChunk::CHUNK_SIZE + quadSize, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize);
+			}
+			else
+				rightHeight = this->heightMap[i][j + 1];
+
+			float upHeight;
+			if (i == 0)
+			{
+				upHeight = PerlinNoise2D::get().perlinNoise2D(this->x * MapChunk::CHUNK_SIZE + j * quadSize, (this->y + 1) * MapChunk::CHUNK_SIZE + quadSize);
+			}
+			else
+				upHeight = this->heightMap[i - 1][j];
+
+			float downHeight;
+			if (i == MapChunk::NUM_QUADS_PER_SIDE)
+			{
+				downHeight = PerlinNoise2D::get().perlinNoise2D(this->x * MapChunk::CHUNK_SIZE + j * quadSize, this->y * MapChunk::CHUNK_SIZE - quadSize);
+			}
+			else
+				downHeight = this->heightMap[i + 1][j];
+
+			float delta = 2 * quadSize;
+			float derivativeLeftRight = (rightHeight - leftHeight) / delta;
+			float derivativeUpDown = (upHeight - downHeight) / delta;
+
+			glm::vec3 tangentVectorX = glm::vec3(1.0f, derivativeLeftRight, 0.0f);
+			glm::vec3 tangentVectorY = glm::vec3(0.0f, derivativeUpDown, 1.0f);
+
+			glm::vec3 normal = glm::normalize(glm::cross(tangentVectorX, tangentVectorY));
+
+			// mai trebuie? // TODO:
+			//if (normal.y < 0.0f)
+			//	normal = -normal;
+
+			this->normals.push_back(normal);
+			//
 
 			float uvX = (float)j / MapChunk::NUM_QUADS_PER_SIDE;
 			float uvY = 1.0f - (float)i / MapChunk::NUM_QUADS_PER_SIDE;
@@ -52,6 +100,8 @@ MapChunk::MapChunk(int x, int y)
 	{
 		this->vertices.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, minimumHeight, 1.0f * (this->y + 1) * MapChunk::CHUNK_SIZE));
 
+		this->normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f)); // sunt valori foarte aproximative, dar fetele acestea nu ar trebui sa fie vazute
+
 		float uvX = (float)j / MapChunk::NUM_QUADS_PER_SIDE;	
 		float uvY = 1.0f;
 
@@ -60,6 +110,8 @@ MapChunk::MapChunk(int x, int y)
 	for (int j = 0; j < MapChunk::NUM_QUADS_PER_SIDE + 1; ++j)
 	{
 		this->vertices.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, minimumHeight, 1.0f * this->y * MapChunk::CHUNK_SIZE));
+
+		this->normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f)); // sunt valori foarte aproximative, dar fetele acestea nu ar trebui sa fie vazute
 
 		float uvX = (float)j / MapChunk::NUM_QUADS_PER_SIDE;
 		float uvY = 0.0f;
@@ -70,6 +122,8 @@ MapChunk::MapChunk(int x, int y)
 	{
 		this->vertices.push_back(glm::vec3(1.0f * this->x * MapChunk::CHUNK_SIZE, minimumHeight, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
 
+		this->normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f)); // sunt valori foarte aproximative, dar fetele acestea nu ar trebui sa fie vazute
+
 		float uvX = 0.0f;
 		float uvY = 1.0f - (float)i / MapChunk::NUM_QUADS_PER_SIDE;
 
@@ -78,6 +132,8 @@ MapChunk::MapChunk(int x, int y)
 	for (int i = 0; i < MapChunk::NUM_QUADS_PER_SIDE + 1; ++i)
 	{
 		this->vertices.push_back(glm::vec3(1.0f * (this->x + 1) * MapChunk::CHUNK_SIZE, minimumHeight, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
+
+		this->normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f)); // sunt valori foarte aproximative, dar fetele acestea nu ar trebui sa fie vazute
 
 		float uvX = 1.0f;
 		float uvY = 1.0f - (float)i / MapChunk::NUM_QUADS_PER_SIDE;
@@ -172,15 +228,18 @@ void MapChunk::setupOpenGL()
 	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 
-	glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(glm::vec3) + this->uvs.size() * sizeof(glm::vec2), nullptr, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(glm::vec3) + this->normals.size() * sizeof(glm::vec3) + this->uvs.size() * sizeof(glm::vec2), nullptr, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, this->vertices.size() * sizeof(glm::vec3), this->vertices.data());
-	glBufferSubData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(glm::vec3), this->uvs.size() * sizeof(glm::vec2), this->uvs.data());
+	glBufferSubData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(glm::vec3), this->normals.size() * sizeof(glm::vec3), this->normals.data());
+	glBufferSubData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(glm::vec3) + this->normals.size() * sizeof(glm::vec3), this->uvs.size() * sizeof(glm::vec2), this->uvs.data());
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(GLuint), this->indices.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)(this->vertices.size() * sizeof(glm::vec3)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)(this->vertices.size() * sizeof(glm::vec3)));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)(this->vertices.size() * sizeof(glm::vec3) + this->normals.size() * sizeof(glm::vec3)));
+	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);
 
@@ -191,6 +250,7 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	: x(other.x), y(other.y)
 	, heightMap(std::move(other.heightMap))
 	, vertices(std::move(other.vertices))
+	, normals(std::move(other.normals))
 	, uvs(std::move(other.uvs))
 	, indices(std::move(other.indices))
 	, VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
@@ -210,6 +270,7 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	this->y = other.y;
 	this->heightMap = std::move(other.heightMap);
 	this->vertices = std::move(other.vertices);
+	this->normals = std::move(other.normals);
 	this->uvs = std::move(other.uvs);
 	this->indices = std::move(other.indices);
 	this->VAO = other.VAO;
