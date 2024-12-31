@@ -28,6 +28,8 @@ private:
 
 	bool openGLSetupDone;
 
+	glm::vec3 directionalLight;
+
 	glm::vec2 rotatePoint(float x, float y, float angleDegrees) const;
 
 	static const int MAX_COORDINATE_Y;
@@ -35,6 +37,8 @@ private:
 
 	static const float DELTA_CULLING_SHADOW_MAPPING;
 	static const float INF_HEIGHT;
+
+	static const float DAY_NIGHT_CYCLE_SPEED;
 
 public:
 	MapChunk(int x, int y);
