@@ -17,7 +17,7 @@
 #include "../GlobalClock/GlobalClock.h"
 
 MapChunk::MapChunk(int x, int y)
-	: x(x), y(y), openGLSetupDone(false), directionalLight(glm::vec3(0.0f, -1.0f, 0.0f))
+	: x(x), y(y), openGLSetupDone(false)
 {
 	float quadSize = (float)MapChunk::CHUNK_SIZE / MapChunk::NUM_QUADS_PER_SIDE;
 
@@ -261,7 +261,6 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	, indices(std::move(other.indices))
 	, VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
 	, openGLSetupDone(other.openGLSetupDone)
-	, directionalLight(other.directionalLight)
 {
 	other.VAO = 0;
 	other.VBO = 0;
@@ -284,7 +283,6 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	this->VBO = other.VBO;
 	this->EBO = other.EBO;
 	this->openGLSetupDone = other.openGLSetupDone;
-	this->directionalLight = other.directionalLight;
 
 	other.VAO = 0;
 	other.VBO = 0;
@@ -310,7 +308,7 @@ void MapChunk::draw()
 	// set value for view matrix
 	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "projection"), 1, GL_FALSE, &Camera::get().getProjectionMatrix()[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "view"), 1, GL_FALSE, &Camera::get().getViewMatrix()[0][0]);
-	glUniform3fv(glGetUniformLocation(Map::get().getProgramId(), "directionalLight"), 1, &this->directionalLight[0]);
+	glUniform3fv(glGetUniformLocation(Map::get().getProgramId(), "directionalLight"), 1, &MapChunk::directionalLight[0]);
 
 	// set texture
 	glActiveTexture(GL_TEXTURE0);
@@ -336,13 +334,18 @@ void MapChunk::draw()
 
 void MapChunk::update()
 {
-	float directionalLightAngleDegrees = GlobalClock::get().getCurrentTime() * MapChunk::DAY_NIGHT_CYCLE_SPEED;
+
+}
+
+void MapChunk::commonUpdate()
+{
+	float directionalLightAngleDegrees = GlobalClock::get().getDeltaTime() * MapChunk::DAY_NIGHT_CYCLE_SPEED;
 
 	glm::vec3 rotationAxis = glm::vec3(1.0f, 0.0f, 0.0f);
 
-	glm::vec4 rotatedDirectionalLight = glm::rotate(glm::mat4(1.0f), glm::radians(directionalLightAngleDegrees), rotationAxis) * glm::vec4(this->directionalLight, 1.0f);
+	glm::vec4 rotatedDirectionalLight = glm::rotate(glm::mat4(1.0f), glm::radians(directionalLightAngleDegrees), rotationAxis) * glm::vec4(MapChunk::directionalLight, 1.0f);
 
-	this->directionalLight = glm::vec3(rotatedDirectionalLight);
+	MapChunk::directionalLight = glm::vec3(rotatedDirectionalLight);
 }
 
 int MapChunk::calculateChunkX(float x)
@@ -374,4 +377,5 @@ const int MapChunk::MAX_COORDINATE_Y = 666013;
 const float MapChunk::DELTA_CULLING_SHADOW_MAPPING = 1.0f;
 const float MapChunk::INF_HEIGHT = 1000000.0f;
 
-const float MapChunk::DAY_NIGHT_CYCLE_SPEED = 0.05f;
+glm::vec3 MapChunk::directionalLight = glm::vec3(0.0f, -1.0f, 0.0f); // incepe cu lumina
+const float MapChunk::DAY_NIGHT_CYCLE_SPEED = 36.0f;

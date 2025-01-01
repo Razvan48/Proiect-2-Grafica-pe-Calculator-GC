@@ -9,7 +9,7 @@
 Map::Map()
 	: NUM_CHUNKS_AHEAD(9)
 	, lastTimeLoadedOpenGL(0.0f)
-	, TIME_BETWEEN_OPENGL_LOADS(1.0f / 30.0f)
+	, TIME_BETWEEN_OPENGL_LOADS(1.0f / 45.0f)
 {
 	this->mapChunks.reserve((this->NUM_CHUNKS_AHEAD * 2 + 1) * (this->NUM_CHUNKS_AHEAD * 2 + 1));
 
@@ -19,6 +19,14 @@ Map::Map()
 Map::~Map()
 {
 	glDeleteProgram(this->programId);
+
+	this->mapChunksMutex.lock();
+	this->mapChunks.clear();
+	this->mapChunksMutex.unlock();
+
+	this->chunksAlreadyBeingLoadedMutex.lock();
+	this->chunksAlreadyBeingLoaded.clear();
+	this->chunksAlreadyBeingLoadedMutex.unlock();
 }
 
 Map& Map::get()
@@ -48,6 +56,8 @@ void Map::draw()
 
 void Map::update()
 {
+	MapChunk::commonUpdate();
+
 	this->mapChunksMutex.lock();
 	for (int i = 0; i < this->mapChunks.size(); ++i)
 		this->mapChunks[i].update();
@@ -85,12 +95,16 @@ void Map::update()
 	{
 		for (int j = -this->NUM_CHUNKS_AHEAD; j <= this->NUM_CHUNKS_AHEAD; ++j)
 		{
-			if (!chunksAlreadyLoaded[i + this->NUM_CHUNKS_AHEAD][j + this->NUM_CHUNKS_AHEAD] && cameraChunkX + i >= 0 && cameraChunkY + j >= 0)
+			if (!chunksAlreadyLoaded[i + this->NUM_CHUNKS_AHEAD][j + this->NUM_CHUNKS_AHEAD] && cameraChunkX + i >= 0 && cameraChunkY + j >= 0
+				&& !this->isChunkBeingLoaded(cameraChunkX + i, cameraChunkY + j))
 			{
+				this->addChunkToBeingLoaded(cameraChunkX + i, cameraChunkY + j);
+
 				std::thread mapChunkThread([this, cameraChunkX, cameraChunkY, i, j]()
 					{
 						MapChunk mapChunk(cameraChunkX + i, cameraChunkY + j);
 						this->addMapChunk(mapChunk);
+						this->removeChunkFromBeingLoaded(cameraChunkX + i, cameraChunkY + j);
 					});
 				mapChunkThread.detach();
 			}
@@ -101,17 +115,30 @@ void Map::update()
 void Map::addMapChunk(MapChunk& mapChunk)
 {
 	this->mapChunksMutex.lock();
-	bool mapChunkAlreadyLoaded = false;
-	for (int i = 0; i < this->mapChunks.size(); ++i)
-	{
-		if (this->mapChunks[i].getX() == mapChunk.getX() && this->mapChunks[i].getY() == mapChunk.getY())
-		{
-			mapChunkAlreadyLoaded = true;
-			break;
-		}
-	}
-	if (!mapChunkAlreadyLoaded)
-		this->mapChunks.push_back(std::move(mapChunk));
+	this->mapChunks.push_back(std::move(mapChunk));
 	this->mapChunksMutex.unlock();
+}
+
+void Map::addChunkToBeingLoaded(int x, int y)
+{
+	this->chunksAlreadyBeingLoadedMutex.lock();
+	this->chunksAlreadyBeingLoaded.insert(std::make_pair(x, y));
+	this->chunksAlreadyBeingLoadedMutex.unlock();
+}
+
+void Map::removeChunkFromBeingLoaded(int x, int y)
+{
+	this->chunksAlreadyBeingLoadedMutex.lock();
+	this->chunksAlreadyBeingLoaded.erase(std::make_pair(x, y));
+	this->chunksAlreadyBeingLoadedMutex.unlock();
+}
+
+bool Map::isChunkBeingLoaded(int x, int y)
+{
+	this->chunksAlreadyBeingLoadedMutex.lock();
+	bool isChunkInSet = (this->chunksAlreadyBeingLoaded.find(std::make_pair(x, y)) != this->chunksAlreadyBeingLoaded.end());
+	this->chunksAlreadyBeingLoadedMutex.unlock();
+
+	return isChunkInSet;
 }
 

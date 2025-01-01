@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <mutex>
+#include <set>
 
 class Map
 {
@@ -20,9 +21,15 @@ private:
 	std::vector<MapChunk> mapChunks;
 	std::mutex mapChunksMutex;
 
+	std::set<std::pair<int, int>> chunksAlreadyBeingLoaded;
+	std::mutex chunksAlreadyBeingLoadedMutex;
+
 	GLuint programId;
 
 	void addMapChunk(MapChunk& mapChunk);
+	void addChunkToBeingLoaded(int x, int y);
+	void removeChunkFromBeingLoaded(int x, int y);
+	bool isChunkBeingLoaded(int x, int y);
 
 	float lastTimeLoadedOpenGL;
 	const float TIME_BETWEEN_OPENGL_LOADS;
