@@ -405,6 +405,7 @@ void MapChunk::draw()
 			generateGrass();
 		}
 
+		grass->update();
 		grass->draw();
 	}
 	else if (grass)
@@ -415,20 +416,7 @@ void MapChunk::draw()
 
 void MapChunk::update()
 {
-	// Grass
-	if (isCameraInChunk())
-	{
-		if (!grass)
-		{
-			generateGrass();
-		}
 
-		grass->update();
-	}
-	else if (grass)
-	{
-		grass.reset();
-	}
 }
 
 void MapChunk::commonUpdate()
