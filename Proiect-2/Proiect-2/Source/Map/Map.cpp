@@ -39,6 +39,14 @@ void Map::draw()
 {
 	this->mapChunksMutex.lock();
 	for (int i = 0; i < this->mapChunks.size(); ++i)
+		if (this->mapChunks[i].getOpenGLSetupDone())
+			this->mapChunks[i].draw();
+	this->mapChunksMutex.unlock();
+
+
+
+	this->mapChunksMutex.lock();
+	for (int i = 0; i < this->mapChunks.size(); ++i)
 	{
 		if (!this->mapChunks[i].getOpenGLSetupDone())
 		{
@@ -49,7 +57,6 @@ void Map::draw()
 			}
 			break;
 		}
-		this->mapChunks[i].draw();
 	}
 	this->mapChunksMutex.unlock();
 }
