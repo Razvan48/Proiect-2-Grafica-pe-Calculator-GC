@@ -28,18 +28,18 @@ public:
 
 	void draw();
 	void update();
+	void createVAO(const std::vector<glm::vec3>& positions);
 
-	static const float windMagnitude;
-	static const float windWaveLength;
-	static const float windWavePeriod;
+	static void setupOpenGL();
 
 private:
 	GLuint bladesCount;
 
 	GLuint VAO;
-	GLuint grassComputeShader, grassShader;
+	GLuint grassInputBuffer, grassOutputBuffer, grassIndirectBuffer;
 
-	std::vector<Blade> generateBlades();
-	void createVAO();
-	void loadShadersGrass();
+	static GLuint grassComputeShader, grassShader;
+	static const float windMagnitude;
+	static const float windWaveLength;
+	static const float windWavePeriod;
 };

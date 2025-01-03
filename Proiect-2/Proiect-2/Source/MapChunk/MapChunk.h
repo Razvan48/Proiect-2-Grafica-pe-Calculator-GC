@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include "../Grass/Grass.h"
+
 class MapChunk
 {
 private:
@@ -26,6 +28,8 @@ private:
 	GLuint VBO;
 	GLuint EBO;
 
+	Grass grass;
+
 	bool openGLSetupDone;
 
 	glm::vec2 rotatePoint(float x, float y, float angleDegrees) const;
@@ -38,6 +42,8 @@ private:
 
 	static glm::vec3 directionalLight;
 	static const float DAY_NIGHT_CYCLE_SPEED;
+
+	glm::vec3 generateRandomPointInTriangle(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C) const;
 
 public:
 	MapChunk(int x, int y);

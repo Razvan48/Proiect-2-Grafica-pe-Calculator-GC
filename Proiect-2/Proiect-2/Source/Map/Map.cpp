@@ -7,7 +7,7 @@
 
 
 Map::Map()
-	: NUM_CHUNKS_AHEAD(9)
+	: NUM_CHUNKS_AHEAD(0) // TODO: 9
 	, lastTimeLoadedOpenGL(0.0f)
 	, TIME_BETWEEN_OPENGL_LOADS(1.0f / 45.0f)
 {

@@ -19,12 +19,10 @@
 #include "Source/Skybox/Skybox.h"
 #include "Source/Map/Map.h"
 #include "Source/Model/Model.h"
-#include "Source/Grass/Grass.h"
 
 // Objects
 Skybox* skybox;
 Model* donut;
-Grass* grass;
 
 // Shaders
 GLuint modelProgramID;
@@ -37,8 +35,8 @@ void updateFunction(int val)
 	// Input
 	InputManager::get().update();
 
-	// Grass
-	grass->update();
+	// Map - Terrain + Grass
+	Map::get().update();
 
 	// Clock
 	GlobalClock::get().update();
@@ -81,7 +79,8 @@ void Initialize(void)
 	// Objects
 	donut = new Model("resources/donut/tor.obj");
 	skybox = new Skybox();
-	grass = new Grass();
+
+	Grass::setupOpenGL();
 }
 
 void RenderFunction(void)
@@ -100,14 +99,12 @@ void RenderFunction(void)
 
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 64, &view);
 	glBufferSubData(GL_UNIFORM_BUFFER, 64, 64, &projection);
-	
-	grass->draw();
+
+	// Map - Terrain + Grass
+	Map::get().draw();
 
 	// Draw skybox as last
 	skybox->draw();
-
-	Map::get().draw();
-	Map::get().update(); // TODO: de mutat de aici (momentan doar sa mearga)
 
 	glutSwapBuffers();
 	glFlush();
@@ -118,7 +115,6 @@ void Cleanup(void)
 	DestroyShaders();
 
 	// Objects
-	delete grass;
 	delete skybox;
 	delete donut;
 }

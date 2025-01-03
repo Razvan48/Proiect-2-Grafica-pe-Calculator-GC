@@ -162,7 +162,7 @@ void InputManager::processSpecialKeysDown(int key, int x, int y)
 {
 	if (key == GLUT_KEY_SHIFT_L || key == GLUT_KEY_SHIFT_R)
 	{
-		Camera::get().setMovementSpeed(10.0f);
+		Camera::get().setMovementSpeed(40.0f);
 	}
 }
 
