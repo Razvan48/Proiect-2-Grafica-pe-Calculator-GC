@@ -18,6 +18,7 @@
 
 MapChunk::MapChunk(int x, int y)
 	: x(x), y(y), openGLSetupDone(false)
+	, grass(nullptr)
 {
 	float quadSize = (float)MapChunk::CHUNK_SIZE / MapChunk::NUM_QUADS_PER_SIDE;
 
@@ -249,7 +250,11 @@ void MapChunk::setupOpenGL()
 
 	glBindVertexArray(0);
 
-	// grass
+	this->openGLSetupDone = true;
+}
+
+void MapChunk::generateGrass()
+{
 	float quadSize = (float)MapChunk::CHUNK_SIZE / MapChunk::NUM_QUADS_PER_SIDE;
 
 	std::vector<glm::vec3> grassPositions;
@@ -275,10 +280,8 @@ void MapChunk::setupOpenGL()
 		}
 	}
 
-	// grass.createVAO(x, y);
-	grass.createVAO(grassPositions);
-
-	this->openGLSetupDone = true;
+	grass = std::make_unique<Grass>();
+	grass->createVAO(grassPositions);
 }
 
 glm::vec3 MapChunk::generateRandomPointInTriangle(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C) const
@@ -299,6 +302,14 @@ glm::vec3 MapChunk::generateRandomPointInTriangle(const glm::vec3& A, const glm:
 	return lambda1 * A + lambda2 * B + lambda3 * C;
 }
 
+bool MapChunk::isCameraInChunk()
+{
+	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
+	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
+
+	return cameraChunkX == x && cameraChunkY == y;
+}
+
 MapChunk::MapChunk(MapChunk&& other) noexcept
 	: x(other.x), y(other.y)
 	, heightMap(std::move(other.heightMap))
@@ -308,6 +319,7 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	, indices(std::move(other.indices))
 	, VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
 	, openGLSetupDone(other.openGLSetupDone)
+	// TODO: grass std::unique_ptr
 {
 	other.VAO = 0;
 	other.VBO = 0;
@@ -335,6 +347,8 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	other.VBO = 0;
 	other.EBO = 0;
 
+	// TODO: grass std::unique_ptr
+
 	return *this;
 }
 
@@ -346,6 +360,11 @@ MapChunk::~MapChunk()
 		glDeleteBuffers(1, &this->VBO);
 	if (this->EBO)
 		glDeleteBuffers(1, &this->EBO);
+
+	if (grass)
+	{
+		grass.reset();
+	}
 }
 
 void MapChunk::draw()
@@ -379,13 +398,37 @@ void MapChunk::draw()
 	glUseProgram(0);
 
 	// Grass
-	grass.draw();
+	if (isCameraInChunk())
+	{
+		if (!grass)
+		{
+			generateGrass();
+		}
+
+		grass->draw();
+	}
+	else if (grass)
+	{
+		grass.reset();
+	}
 }
 
 void MapChunk::update()
 {
 	// Grass
-	grass.update();
+	if (isCameraInChunk())
+	{
+		if (!grass)
+		{
+			generateGrass();
+		}
+
+		grass->update();
+	}
+	else if (grass)
+	{
+		grass.reset();
+	}
 }
 
 void MapChunk::commonUpdate()
