@@ -72,14 +72,8 @@ void Grass::update()
 {
     glUseProgram(grassComputeShader);
 
-    // TODO: verifica daca asta e ok
     glUniform1f(glGetUniformLocation(grassComputeShader, "current_time"), GlobalClock::get().getCurrentTime());
-    // grass_compute_shader_.setFloat("current_time", static_cast<float>(glfwGetTime()));
-
-    // TODO: verifica daca asta e ok
     glUniform1f(glGetUniformLocation(grassComputeShader, "delta_time"), GlobalClock::get().getDeltaTime());
-    // grass_compute_shader_.setFloat("delta_time", delta_time.count() / 1e3f);
-
     glUniform1f(glGetUniformLocation(grassComputeShader, "wind_magnitude"), windMagnitude);
     glUniform1f(glGetUniformLocation(grassComputeShader, "wind_wave_length"), windWaveLength);
     glUniform1f(glGetUniformLocation(grassComputeShader, "wind_wave_period"), windWavePeriod);
