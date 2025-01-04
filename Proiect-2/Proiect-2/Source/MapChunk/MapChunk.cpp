@@ -317,7 +317,7 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	, indices(std::move(other.indices))
 	, VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
 	, grassPositions(std::move(other.grassPositions))
-	// TODO: grass std::unique_ptr
+	, grass(std::move(other.grass))
 	, openGLSetupDone(other.openGLSetupDone)
 {
 	other.VAO = 0;
@@ -341,7 +341,7 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	this->VBO = other.VBO;
 	this->EBO = other.EBO;
 	this->grassPositions = std::move(other.grassPositions);
-	// TODO: grass std::unique_ptr
+	this->grass = std::move(other.grass);
 	this->openGLSetupDone = other.openGLSetupDone;
 
 	other.VAO = 0;
