@@ -10,9 +10,9 @@
 
 #include <iostream>
 
-Water::Water(const WaterFrameBuffers& fbos_, GLfloat height_, const std::string& dudvMapName_, 
+Water::Water(const WaterFrameBuffers& fbos_, const std::string& dudvMapName_, 
 			const std::string& normalMapName_, float waterSpeed_) 
-	: height(height_), fbos(fbos_), dudvMapName(dudvMapName_), normalMapName(normalMapName_), waterSpeed(waterSpeed_)
+	: height(Water::WATER_HEIGHT), fbos(fbos_), dudvMapName(dudvMapName_), normalMapName(normalMapName_), waterSpeed(waterSpeed_)
 {
 	this->createVAO();
 	this->programId = LoadShaders("shaders/water/water.vert", "shaders/water/water.frag");
@@ -156,3 +156,7 @@ void Water::draw(const glm::vec4& lightPos, const glm::vec3& lightColor)
 	glBlendFunc(sfactor, dfactor);
 
 }
+
+const GLfloat Water::WATER_HEIGHT = 5.0f;
+
+GLfloat Water::getHeight() { return Water::WATER_HEIGHT; }

@@ -11,6 +11,8 @@
 class Water
 {
 private:
+	static const GLfloat WATER_HEIGHT;
+
 	GLuint VAO, VBO, programId;
 	GLfloat height;
 	WaterFrameBuffers fbos;
@@ -25,12 +27,14 @@ private:
 	void prepareRender(const glm::vec4& lightPos, const glm::vec3& lightColor);
 
 public:
-	Water(const WaterFrameBuffers& fbos_, GLfloat height_ = 5.0f, const std::string& dudvMapName_ = "dudvMap", 
+	Water(const WaterFrameBuffers& fbos_, const std::string& dudvMapName_ = "dudvMap", 
 				const std::string& normalMapName_ = "waterNormalMap", float waterSpeed_ = 0.005f);
 	~Water();
 	void draw(const glm::vec4& lightPos = glm::vec4(-100.0f, -100.0, -100.0f, 0.0f), const glm::vec3& lightColor = glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// getters
-	inline GLfloat getHeight() const { return this->height; }
+	// inline GLfloat getHeight() const { return this->height; }
 	inline WaterFrameBuffers getfbos() const { return fbos; }
+
+	static GLfloat getHeight();
 };
