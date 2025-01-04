@@ -53,6 +53,9 @@ public:
 
 	// Setters
 	inline void setMovementSpeed(float speed) { movementSpeed = speed; }
+	inline void setPosition(glm::vec3 pos) { this->position = pos; }
+
+	inline void invertPitch() { this->pitch *= -1; updateCameraVectors(); };
 
 private:
 	// camera attributes

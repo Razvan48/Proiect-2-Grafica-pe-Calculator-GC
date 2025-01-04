@@ -19,10 +19,14 @@
 #include "Source/Skybox/Skybox.h"
 #include "Source/Map/Map.h"
 #include "Source/Model/Model.h"
+#include "Source/Water/WaterFrameBuffers.h"
+#include "Source/Water/Water.h"
 
 // Objects
 Skybox* skybox;
 Model* donut;
+WaterFrameBuffers* fbos;
+Water* water;
 
 // Shaders
 GLuint modelProgramID;
@@ -58,6 +62,17 @@ void DestroyShaders(void)
 	glDeleteProgram(modelProgramID);
 }
 
+void setClippingPlane(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+{
+	GLint programInUse;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &programInUse);
+
+	glUseProgram(Map::get().getProgramId());
+	glUniform4f(glGetUniformLocation(Map::get().getProgramId(), "plane"), x, y, z, w);
+
+	glUseProgram(programInUse);
+}
+
 void Initialize(void)
 {
 	// Configure global opengl state
@@ -81,9 +96,14 @@ void Initialize(void)
 	skybox = new Skybox();
 
 	Grass::setupOpenGL();
+
+	fbos = new WaterFrameBuffers(WindowManager::get().getWidth(), WindowManager::get().getHeight());
+	water = new Water(*fbos);
+
+	Camera::get().setPosition(glm::vec3(0.0f, 25.0f, 0.0f));
 }
 
-void RenderFunction(void)
+void drawAllObjectsExceptWater()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -105,6 +125,57 @@ void RenderFunction(void)
 
 	// Draw skybox as last
 	skybox->draw();
+}
+
+void computeWater()
+{
+	glEnable(GL_CLIP_DISTANCE0);
+	// create the reflection of all objects
+	fbos->bindReflectionFrameBuffer();
+
+	// Repositioning of the camera for the reflection
+	GLfloat distance = 2 * (Camera::get().getPosition().y - water->getHeight());
+	glm::vec3 cameraPos = Camera::get().getPosition();
+	cameraPos.y -= distance;
+	Camera::get().setPosition(cameraPos);
+	Camera::get().invertPitch();
+	setClippingPlane(0, 1, 0, -water->getHeight() + 0.02f);
+
+	// Draw objects
+	drawAllObjectsExceptWater();
+
+	// Bring camera to the initial position
+	cameraPos.y += distance;
+	Camera::get().setPosition(cameraPos);
+	Camera::get().invertPitch();
+
+	fbos->unbindCurrentFrameBuffer();
+
+	// end create reflection
+
+
+	// create the refraction of all objects
+	fbos->bindRefractionFrameBuffer();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	setClippingPlane(0, -1, 0, water->getHeight() + 0.1f);
+
+	// Draw objects
+	drawAllObjectsExceptWater();
+
+	fbos->unbindCurrentFrameBuffer();
+	// end create refraction
+
+	glDisable(GL_CLIP_PLANE0);
+	// setClippingPlane(0, 1, 0, 1000000); // daca nu merge disable la clip_plane
+
+}
+
+void RenderFunction(void)
+{
+	drawAllObjectsExceptWater();
+
+	computeWater();
+	water->draw(glm::vec4(MapChunk::getDirectionalLight(), 0.0f));
 
 	glutSwapBuffers();
 	glFlush();
@@ -117,6 +188,7 @@ void Cleanup(void)
 	// Objects
 	delete skybox;
 	delete donut;
+	delete water;
 }
 
 int main(int argc, char* argv[])

@@ -66,6 +66,8 @@ void TextureManager::loadResources()
 
 	this->loadTexture("grass0", "resources/grass/grass0.jpg");
 	this->loadTexture("grass1", "resources/grass/grass1.jpg");
+	this->loadTexture("dudvMap", "resources/water/dudvMap.png");
+	this->loadTexture("waterNormalMap", "resources/water/waterNormalMap.png");
 }
 
 GLuint TextureManager::getTexture(const std::string& textureName)

@@ -12,8 +12,13 @@ out vec3 fragNormal;
 uniform mat4 projection;
 uniform mat4 view;
 
+uniform vec4 plane;
+
 void main()
 {
+	vec4 worldPosition = vec4(inPosition, 1.0);
+	gl_ClipDistance[0] = dot(worldPosition, plane);
+
 	texCoord = inTexCoord;
 
 	fragPosition = inPosition;
