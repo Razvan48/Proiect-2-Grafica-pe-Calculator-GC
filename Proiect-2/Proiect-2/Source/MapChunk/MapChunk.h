@@ -29,6 +29,7 @@ private:
 	GLuint VBO;
 	GLuint EBO;
 
+	std::vector<glm::vec3> grassPositions;
 	std::unique_ptr<Grass> grass;
 
 	bool openGLSetupDone;

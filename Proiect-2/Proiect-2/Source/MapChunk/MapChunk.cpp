@@ -223,6 +223,29 @@ MapChunk::MapChunk(int x, int y)
 	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + (MapChunk::NUM_QUADS_PER_SIDE + 1));
 	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 3 * (MapChunk::NUM_QUADS_PER_SIDE + 1));
 	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 4 * (MapChunk::NUM_QUADS_PER_SIDE + 1) - 1);
+
+	// grass positions
+	for (int i = 1; i < this->heightMap.size(); ++i)
+	{
+		for (int j = 1; j < this->heightMap[i].size(); ++j)
+		{
+			grassPositions.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, this->heightMap[i][j], (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
+
+			GLuint index0 = i * this->heightMap[i].size() + j;
+			GLuint index1 = (i - 1) * this->heightMap[i - 1].size() + j;
+			GLuint index2 = (i - 1) * this->heightMap[i - 1].size() + j - 1;
+
+			GLuint index3 = i * this->heightMap[i].size() + j;
+			GLuint index4 = (i - 1) * this->heightMap[i - 1].size() + j - 1;
+			GLuint index5 = i * this->heightMap[i].size() + j - 1;
+
+			for (int k = 0; k < 50; ++k)
+			{
+				grassPositions.push_back(generateRandomPointInTriangle(vertices[index0], vertices[index1], vertices[index2]));
+				grassPositions.push_back(generateRandomPointInTriangle(vertices[index3], vertices[index4], vertices[index5]));
+			}
+		}
+	}
 }
 
 void MapChunk::setupOpenGL()
@@ -255,31 +278,6 @@ void MapChunk::setupOpenGL()
 
 void MapChunk::generateGrass()
 {
-	float quadSize = (float)MapChunk::CHUNK_SIZE / MapChunk::NUM_QUADS_PER_SIDE;
-
-	std::vector<glm::vec3> grassPositions;
-	for (int i = 1; i < this->heightMap.size(); ++i)
-	{
-		for (int j = 1; j < this->heightMap[i].size(); ++j)
-		{
-			grassPositions.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, this->heightMap[i][j], (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
-
-			GLuint index0 = i * this->heightMap[i].size() + j;
-			GLuint index1 = (i - 1) * this->heightMap[i - 1].size() + j;
-			GLuint index2 = (i - 1) * this->heightMap[i - 1].size() + j - 1;
-
-			GLuint index3 = i * this->heightMap[i].size() + j;
-			GLuint index4 = (i - 1) * this->heightMap[i - 1].size() + j - 1;
-			GLuint index5 = i * this->heightMap[i].size() + j - 1;
-
-			for (int i = 0; i < 50; ++i)
-			{
-				grassPositions.push_back(generateRandomPointInTriangle(vertices[index0], vertices[index1], vertices[index2]));
-				grassPositions.push_back(generateRandomPointInTriangle(vertices[index3], vertices[index4], vertices[index5]));
-			}
-		}
-	}
-
 	grass = std::make_unique<Grass>();
 	grass->createVAO(grassPositions);
 }
@@ -318,8 +316,9 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	, uvs(std::move(other.uvs))
 	, indices(std::move(other.indices))
 	, VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
-	, openGLSetupDone(other.openGLSetupDone)
+	, grassPositions(std::move(other.grassPositions))
 	// TODO: grass std::unique_ptr
+	, openGLSetupDone(other.openGLSetupDone)
 {
 	other.VAO = 0;
 	other.VBO = 0;
@@ -341,13 +340,13 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	this->VAO = other.VAO;
 	this->VBO = other.VBO;
 	this->EBO = other.EBO;
+	this->grassPositions = std::move(other.grassPositions);
+	// TODO: grass std::unique_ptr
 	this->openGLSetupDone = other.openGLSetupDone;
 
 	other.VAO = 0;
 	other.VBO = 0;
 	other.EBO = 0;
-
-	// TODO: grass std::unique_ptr
 
 	return *this;
 }
@@ -404,7 +403,7 @@ void MapChunk::draw()
 		{
 			generateGrass();
 		}
-
+		
 		grass->update();
 		grass->draw();
 	}
