@@ -41,4 +41,7 @@ public:
 	void update();
 
 	inline GLuint getProgramId() const { return programId; }
+
+	glm::vec2 getTopLeftCornerOfVisibleMap() const;
+	glm::vec2 getBottomRightCornerOfVisibleMap() const;
 };

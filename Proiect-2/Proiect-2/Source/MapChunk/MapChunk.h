@@ -16,7 +16,6 @@ private:
 	int x;
 	int y;
 
-	static const int CHUNK_SIZE;
 	static const int NUM_QUADS_PER_SIDE;
 
 	std::vector<std::vector<float>> heightMap;
@@ -57,6 +56,8 @@ public:
 	~MapChunk();
 	void setupOpenGL();
 
+	static const int CHUNK_SIZE;
+
 	inline int getX() const { return x; }
 	inline int getY() const { return y; }
 
@@ -68,4 +69,6 @@ public:
 	static int calculateChunkY(float y);
 
 	inline bool getOpenGLSetupDone() const { return this->openGLSetupDone; }
+
+	static glm::vec3 getDirectionalLight() { return directionalLight; }
 };

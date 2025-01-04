@@ -147,3 +147,25 @@ bool Map::isChunkBeingLoaded(int x, int y)
 	return isChunkInSet;
 }
 
+glm::vec2 Map::getTopLeftCornerOfVisibleMap() const
+{
+	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
+	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
+
+	float x = (cameraChunkX - this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE;
+	float y = (cameraChunkY - this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE;
+
+	return glm::vec2(x, y);
+}
+
+glm::vec2 Map::getBottomRightCornerOfVisibleMap() const
+{
+	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
+	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
+
+	float x = (cameraChunkX + this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE + MapChunk::CHUNK_SIZE;
+	float y = (cameraChunkY + this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE + MapChunk::CHUNK_SIZE;
+
+	return glm::vec2(x, y);
+}
+
