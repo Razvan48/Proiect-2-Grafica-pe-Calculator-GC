@@ -152,8 +152,8 @@ glm::vec2 Map::getTopLeftCornerOfVisibleMap() const
 	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
 	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
 
-	float x = (cameraChunkX - this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE;
-	float y = (cameraChunkY - this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE;
+	float x = glm::max(0.0f, 1.0f * (cameraChunkX - this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE);
+	float y = glm::max(0.0f, 1.0f * (cameraChunkY - this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE);
 
 	return glm::vec2(x, y);
 }
@@ -163,8 +163,8 @@ glm::vec2 Map::getBottomRightCornerOfVisibleMap() const
 	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
 	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
 
-	float x = (cameraChunkX + this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE + MapChunk::CHUNK_SIZE;
-	float y = (cameraChunkY + this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE + MapChunk::CHUNK_SIZE;
+	float x = glm::max(0.0f, 1.0f * (cameraChunkX + this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE + MapChunk::CHUNK_SIZE);
+	float y = glm::max(0.0f, 1.0f * (cameraChunkY + this->NUM_CHUNKS_AHEAD) * MapChunk::CHUNK_SIZE + MapChunk::CHUNK_SIZE);
 
 	return glm::vec2(x, y);
 }
