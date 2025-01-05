@@ -2,19 +2,13 @@
 
 #include <glm/gtx/transform.hpp>
 
-
-
 #include "../PerlinNoise2D/PerlinNoise2D.h"
-
 #include "../Camera/Camera.h"
-
 #include "../Map/Map.h"
-
 #include "../TextureManager/TextureManager.h"
-
 #include "../RandomGenerator/RandomGenerator.h"
-
 #include "../GlobalClock/GlobalClock.h"
+#include "../Water/Water.h"
 
 MapChunk::MapChunk(int x, int y)
 	: x(x), y(y), openGLSetupDone(false)
@@ -229,8 +223,6 @@ MapChunk::MapChunk(int x, int y)
 	{
 		for (int j = 1; j < this->heightMap[i].size(); ++j)
 		{
-			grassPositions.push_back(glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, this->heightMap[i][j], (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize));
-
 			GLuint index0 = i * this->heightMap[i].size() + j;
 			GLuint index1 = (i - 1) * this->heightMap[i - 1].size() + j;
 			GLuint index2 = (i - 1) * this->heightMap[i - 1].size() + j - 1;
@@ -241,8 +233,18 @@ MapChunk::MapChunk(int x, int y)
 
 			for (int k = 0; k < 50; ++k)
 			{
-				grassPositions.push_back(generateRandomPointInTriangle(vertices[index0], vertices[index1], vertices[index2]));
-				grassPositions.push_back(generateRandomPointInTriangle(vertices[index3], vertices[index4], vertices[index5]));
+				const glm::vec3 pos1 = generateRandomPointInTriangle(vertices[index0], vertices[index1], vertices[index2]);
+				const glm::vec3 pos2 = generateRandomPointInTriangle(vertices[index3], vertices[index4], vertices[index5]);
+
+				if (pos1.y > Water::getHeight())
+				{
+					grassPositions.push_back(pos1);
+				}
+
+				if (pos2.y > Water::getHeight())
+				{
+					grassPositions.push_back(pos2);
+				}
 			}
 		}
 	}
