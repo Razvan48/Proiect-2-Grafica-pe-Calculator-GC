@@ -236,12 +236,12 @@ MapChunk::MapChunk(int x, int y)
 				const glm::vec3 pos1 = generateRandomPointInTriangle(vertices[index0], vertices[index1], vertices[index2]);
 				const glm::vec3 pos2 = generateRandomPointInTriangle(vertices[index3], vertices[index4], vertices[index5]);
 
-				if (pos1.y > Water::getHeight())
+				if (pos1.y > Water::getHeight() + Grass::getThresholdWaterGrass())
 				{
 					grassPositions.push_back(pos1);
 				}
 
-				if (pos2.y > Water::getHeight())
+				if (pos2.y > Water::getHeight() + Grass::getThresholdWaterGrass())
 				{
 					grassPositions.push_back(pos2);
 				}
@@ -308,6 +308,8 @@ bool MapChunk::isCameraInChunk()
 	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
 
 	return cameraChunkX == x && cameraChunkY == y;
+
+	//return std::abs(cameraChunkX - x) <= 1 && std::abs(cameraChunkY - y) <= 1;
 }
 
 MapChunk::MapChunk(MapChunk&& other) noexcept

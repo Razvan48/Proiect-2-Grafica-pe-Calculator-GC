@@ -32,6 +32,8 @@ public:
 
 	static void setupOpenGL();
 
+	static float getThresholdWaterGrass() { return THRESH_WATER_GRASS; }
+
 private:
 	GLuint bladesCount;
 
@@ -42,4 +44,6 @@ private:
 	static const float windMagnitude;
 	static const float windWaveLength;
 	static const float windWavePeriod;
+
+	static const float THRESH_WATER_GRASS;
 };

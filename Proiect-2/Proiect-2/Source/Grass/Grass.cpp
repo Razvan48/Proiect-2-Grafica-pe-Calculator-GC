@@ -36,6 +36,8 @@ const float Grass::windMagnitude = 1.0f;
 const float Grass::windWaveLength = 1.0f;
 const float Grass::windWavePeriod = 1.0f;
 
+const float Grass::THRESH_WATER_GRASS = 1.0f;
+
 Grass::Grass()
 {
 
