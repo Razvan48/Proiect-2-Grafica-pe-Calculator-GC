@@ -54,7 +54,6 @@ void Map::draw()
 				this->mapChunks[i].setupOpenGL();
 				this->lastTimeLoadedOpenGL = GlobalClock::get().getCurrentTime();
 			}
-			break;
 		}
 	}
 	this->mapChunksMutex.unlock();
