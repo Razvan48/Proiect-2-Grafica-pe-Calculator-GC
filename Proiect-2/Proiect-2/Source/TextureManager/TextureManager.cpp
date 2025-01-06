@@ -66,6 +66,9 @@ void TextureManager::loadResources()
 
 	this->loadTexture("grass0", "resources/grass/grass0.jpg");
 	this->loadTexture("grass1", "resources/grass/grass1.jpg");
+	this->loadTexture("sand0", "resources/sand/sand0.jpg");
+	this->loadTexture("sand1", "resources/sand/sand1.jpg");
+
 	this->loadTexture("dudvMap", "resources/water/dudvMap.png");
 	this->loadTexture("waterNormalMap", "resources/water/waterNormalMap.png");
 }

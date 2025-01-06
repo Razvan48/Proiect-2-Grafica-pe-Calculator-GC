@@ -384,6 +384,12 @@ void MapChunk::draw()
 	glBindTexture(GL_TEXTURE_2D, TextureManager::get().getTexture("grass1"));
 	glUniform1i(glGetUniformLocation(Map::get().getProgramId(), "texture0"), 0);
 
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::get().getTexture("sand1"));
+	glUniform1i(glGetUniformLocation(Map::get().getProgramId(), "texture1"), 1);
+
+	glUniform1f(glGetUniformLocation(Map::get().getProgramId(), "threshWaterGrass"), Water::getHeight() + Grass::getThresholdWaterGrass() / 2.0f);
+
 	// draw
 	glBindVertexArray(this->VAO);
 
