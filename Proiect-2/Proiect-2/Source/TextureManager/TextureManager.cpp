@@ -71,6 +71,8 @@ void TextureManager::loadResources()
 
 	this->loadTexture("dudvMap", "resources/water/dudvMap.png");
 	this->loadTexture("waterNormalMap", "resources/water/waterNormalMap.png");
+
+	this->loadTexture("tree0", "resources/tree/tree0.bmp");
 }
 
 GLuint TextureManager::getTexture(const std::string& textureName)

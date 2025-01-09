@@ -25,6 +25,7 @@
 // Objects
 Skybox* skybox;
 Model* donut;
+Model* tree;
 WaterFrameBuffers* fbos;
 Water* water;
 
@@ -93,6 +94,7 @@ void Initialize(void)
 
 	// Objects
 	donut = new Model("resources/donut/tor.obj");
+	tree = new Model("resources/tree/tree0.obj");
 	skybox = new Skybox();
 
 	Grass::setupOpenGL();
@@ -109,6 +111,9 @@ void drawAllObjectsExceptWater()
 
 	// Draw objects
 	// donut->draw(modelProgramID);
+
+	// tree
+	tree->draw(modelProgramID);
 
 	// Grass
 	glm::mat4 view = Camera::get().getViewMatrix();
@@ -188,6 +193,7 @@ void Cleanup(void)
 	// Objects
 	delete skybox;
 	delete donut;
+	delete tree;
 	delete water;
 }
 

@@ -9,7 +9,7 @@
 
 Model::Model(const std::string& objFilePath)
 {
-	bool model = loadOBJ("resources/donut/tor.obj", vertices, uvs, normals); // TODO: de inlocuit
+	bool model = loadOBJ(objFilePath.c_str(), vertices, uvs, normals);
 
 	if (model)
 	{
