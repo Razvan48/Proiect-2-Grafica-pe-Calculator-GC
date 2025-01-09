@@ -24,7 +24,6 @@
 
 // Objects
 Skybox* skybox;
-Model* donut;
 Model* tree;
 WaterFrameBuffers* fbos;
 Water* water;
@@ -56,6 +55,7 @@ void updateFunction(int val)
 void CreateShaders(void)
 {
 	modelProgramID = LoadShaders("shaders/model/model.vert", "shaders/model/model.frag");
+	glUniform1i(glGetUniformLocation(modelProgramID, "textureDiffuse"), 0);
 }
 
 void DestroyShaders(void)
@@ -93,8 +93,7 @@ void Initialize(void)
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, cameraUniformBuffer);
 
 	// Objects
-	donut = new Model("resources/donut/tor.obj");
-	tree = new Model("resources/tree/tree0.obj");
+	tree = new Model("resources/tree/tree0.obj", "tree0");
 	skybox = new Skybox();
 
 	Grass::setupOpenGL();
@@ -110,8 +109,7 @@ void drawAllObjectsExceptWater()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Draw objects
-	// donut->draw(modelProgramID);
-
+	
 	// tree
 	tree->draw(modelProgramID);
 
@@ -192,7 +190,6 @@ void Cleanup(void)
 
 	// Objects
 	delete skybox;
-	delete donut;
 	delete tree;
 	delete water;
 }

@@ -7,11 +7,21 @@
 #include <vector>
 #include <string>
 
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 uv;
+	glm::vec3 color;
+
+	bool operator == (const Vertex& other) const { return position == other.position && normal == other.normal && uv == other.uv && color == other.color; }
+};
+
 class Model
 {
 public:
 	// Contructor
-	Model(const std::string& objFilePath);
+	Model(const std::string& objFilePath, const std::string& textureName);
 
 	// Destructor
 	~Model();
@@ -19,11 +29,12 @@ public:
 	void draw(const GLuint& programId);
 
 private:
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec2> uvs;
-	std::vector<glm::vec3> normals;
+	const std::string textureName;
 
-	GLuint VAO, VBO;
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
+
+	GLuint VAO, VBO, EBO;
 
 	void createVAO();
 };

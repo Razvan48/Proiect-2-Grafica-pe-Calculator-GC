@@ -231,7 +231,7 @@ MapChunk::MapChunk(int x, int y)
 			GLuint index4 = (i - 1) * this->heightMap[i - 1].size() + j - 1;
 			GLuint index5 = i * this->heightMap[i].size() + j - 1;
 
-			for (int k = 0; k < 50; ++k)
+			for (int k = 0; k < 25; ++k)
 			{
 				const glm::vec3 pos1 = generateRandomPointInTriangle(vertices[index0], vertices[index1], vertices[index2]);
 				const glm::vec3 pos2 = generateRandomPointInTriangle(vertices[index3], vertices[index4], vertices[index5]);

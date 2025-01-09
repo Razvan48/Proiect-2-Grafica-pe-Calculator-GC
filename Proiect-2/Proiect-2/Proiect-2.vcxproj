@@ -89,6 +89,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -198,6 +199,7 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="src\loadShaders.cpp" />
     <ClCompile Include="src\objloader.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
+    <ClCompile Include="src\tiny_obj_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\glad\glad.h" />
@@ -499,6 +501,7 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="include\objloader.h" />
     <ClInclude Include="include\SOIL.h" />
     <ClInclude Include="include\stb_image.h" />
+    <ClInclude Include="include\tiny_obj_loader.h" />
     <ClInclude Include="Source\Application\Application.h" />
     <ClInclude Include="Source\Camera\Camera.h" />
     <ClInclude Include="Source\GlobalClock\GlobalClock.h" />

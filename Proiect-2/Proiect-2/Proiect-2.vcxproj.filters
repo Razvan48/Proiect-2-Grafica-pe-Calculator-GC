@@ -222,6 +222,9 @@
     <ClCompile Include="Source\Water\WaterFrameBuffers.cpp">
       <Filter>Source Files\Source\Water</Filter>
     </ClCompile>
+    <ClCompile Include="src\tiny_obj_loader.cpp">
+      <Filter>Source Files\template-built-ins\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\SOIL.h">
@@ -1168,6 +1171,9 @@
     </ClInclude>
     <ClInclude Include="Source\Water\WaterFrameBuffers.h">
       <Filter>Source Files\Source\Water</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tiny_obj_loader.h">
+      <Filter>Header Files\template-built-ins\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

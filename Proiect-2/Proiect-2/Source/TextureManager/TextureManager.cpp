@@ -42,7 +42,8 @@ void TextureManager::loadTexture(const std::string& textureName, const std::stri
 		&this->textures[textureName].width,
 		&this->textures[textureName].height,
 		&this->textures[textureName].nrChannels,
-		SOIL_LOAD_RGBA);
+		SOIL_LOAD_RGBA
+	);
 
 	if (!textureData)
 	{
@@ -72,6 +73,7 @@ void TextureManager::loadResources()
 	this->loadTexture("dudvMap", "resources/water/dudvMap.png");
 	this->loadTexture("waterNormalMap", "resources/water/waterNormalMap.png");
 
+	this->loadTexture("donut", "resources/donut/texture_doughnut.jpg");
 	this->loadTexture("tree0", "resources/tree/tree0.bmp");
 }
 

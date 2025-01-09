@@ -3,22 +3,102 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "objloader.h"	// TODO: de inlocuit
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
+#include <tiny_obj_loader.h>
+
+#include <stdexcept>
+#include <unordered_map>
 
 #include "../Source/Camera/Camera.h"
+#include "../TextureManager/TextureManager.h"
 
-Model::Model(const std::string& objFilePath)
+// from: https://stackoverflow.com/a/57595105
+template <typename T, typename... Rest>
+void hashCombine(std::size_t& seed, const T& v, const Rest&... rest)
 {
-	bool model = loadOBJ(objFilePath.c_str(), vertices, uvs, normals);
+	seed ^= std::hash<T>{}(v)+0x9e3779b9 + (seed << 6) + (seed >> 2);
+	(hashCombine(seed, rest), ...);
+}
 
-	if (model)
+namespace std
+{
+	template<>
+	struct hash<Vertex>
 	{
-		createVAO();
-	}
-	else
+		size_t operator() (const Vertex& vertex) const
+		{
+			size_t seed = 0;
+			hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+			return seed;
+		}
+	};
+}
+
+Model::Model(const std::string& objFilePath, const std::string& textureName)
+	: textureName(textureName)
+{
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string warn, err;
+
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, objFilePath.c_str()))
 	{
-		// TODO: throw exception
+		throw std::runtime_error(warn + err);
 	}
+
+	std::unordered_map<Vertex, uint16_t> uniqueVertices;
+	for (const auto& shape : shapes)
+	{
+		for (const auto& index : shape.mesh.indices)
+		{
+			Vertex vertex = {};
+
+			if (index.vertex_index >= 0)
+			{
+				vertex.position = glm::vec3(
+					attrib.vertices[3 * index.vertex_index + 0],
+					attrib.vertices[3 * index.vertex_index + 1],
+					attrib.vertices[3 * index.vertex_index + 2]
+				);
+
+				vertex.color = glm::vec3(
+					attrib.colors[3 * index.vertex_index + 0],
+					attrib.colors[3 * index.vertex_index + 1],
+					attrib.colors[3 * index.vertex_index + 2]
+				);
+			}
+
+			if (index.normal_index >= 0)
+			{
+				vertex.normal = glm::vec3(
+					attrib.normals[3 * index.normal_index + 0],
+					attrib.normals[3 * index.normal_index + 1],
+					attrib.normals[3 * index.normal_index + 2]
+				);
+			}
+
+			if (index.texcoord_index >= 0)
+			{
+				vertex.uv = glm::vec2(
+					attrib.texcoords[2 * index.texcoord_index + 0],
+					attrib.texcoords[2 * index.texcoord_index + 1]
+				);
+			}
+
+			if (uniqueVertices.count(vertex) == 0)
+			{
+				uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+				vertices.push_back(vertex);
+			}
+
+			indices.push_back(uniqueVertices[vertex]);
+		}
+	}
+
+	createVAO();
 }
 
 Model::~Model()
@@ -33,9 +113,6 @@ Model::~Model()
 
 	glBindVertexArray(0);
 	glDeleteVertexArrays(1, &VAO);
-
-	// Delete shaders
-	// glDeleteProgram(programId);
 
 	// Delete texture
 	// glDeleteTextures(1, &textureID);
@@ -57,16 +134,13 @@ void Model::draw(const GLuint& programId)
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
 	glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
-	// Set textureDiffuse sampler2D to GL_TEXTURE0
-	glUniform1i(glGetUniformLocation(programId, "textureDiffuse"), 0);
+	// Set textureDiffuse sampler2D to GL_TEXTURE0	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::get().getTexture(textureName));
 
 	glBindVertexArray(VAO);
 
-	// TODO
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, textureID);
-
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Model::createVAO()
@@ -76,17 +150,23 @@ void Model::createVAO()
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3) + normals.size() * sizeof(glm::vec3) + uvs.size() * sizeof(glm::vec2), NULL, GL_STATIC_DRAW);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(glm::vec3), &vertices[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), normals.size() * sizeof(glm::vec3), &normals[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3) + normals.size() * sizeof(glm::vec3), uvs.size() * sizeof(glm::vec2), &uvs[0]);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0); // atributul 0 = pozitie
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)0);
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(1); // atributul 1 = normale
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(vertices.size() * sizeof(glm::vec3)));
+	// position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 
-	glEnableVertexAttribArray(2); // atributul 2 = coordonate de texturare
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(vertices.size() * sizeof(glm::vec3) + normals.size() * sizeof(glm::vec3)));
+	// normal
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+
+	// uv
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+
+	glBindVertexArray(0);
 }

@@ -12,6 +12,6 @@ uniform mat4 projection;
 
 void main(void)
 {
-    fragTexCoord = inTexCoord;
+    fragTexCoord = vec2(inTexCoord.x, 1.0 - inTexCoord.y);
     gl_Position = projection * view * model * vec4(inPosition, 1.0);
 }
