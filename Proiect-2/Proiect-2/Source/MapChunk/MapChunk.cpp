@@ -238,12 +238,12 @@ MapChunk::MapChunk(int x, int y)
 
 				if (pos1.y > Water::getHeight() + Grass::getThresholdWaterGrass())
 				{
-					grassPositions.push_back(pos1);
+					grassBlades.push_back(Grass::generateBlade(pos1));
 				}
 
 				if (pos2.y > Water::getHeight() + Grass::getThresholdWaterGrass())
 				{
-					grassPositions.push_back(pos2);
+					grassBlades.push_back(Grass::generateBlade(pos2));
 				}
 			}
 		}
@@ -276,12 +276,16 @@ void MapChunk::setupOpenGL()
 	glBindVertexArray(0);
 
 	this->openGLSetupDone = true;
+
+	// TODO
+	// grass
+	generateGrass();
 }
 
 void MapChunk::generateGrass()
 {
 	grass = std::make_unique<Grass>();
-	grass->createVAO(grassPositions);
+	grass->createVAO(grassBlades);
 }
 
 glm::vec3 MapChunk::generateRandomPointInTriangle(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C) const
@@ -302,14 +306,13 @@ glm::vec3 MapChunk::generateRandomPointInTriangle(const glm::vec3& A, const glm:
 	return lambda1 * A + lambda2 * B + lambda3 * C;
 }
 
-bool MapChunk::isCameraInChunk()
+bool MapChunk::isCameraInChunk() const
 {
 	int cameraChunkX = MapChunk::calculateChunkX(Camera::get().getPosition().x);
 	int cameraChunkY = MapChunk::calculateChunkY(Camera::get().getPosition().z);
 
+	// return std::abs(cameraChunkX - x) <= 1 && std::abs(cameraChunkY - y) <= 1;
 	return cameraChunkX == x && cameraChunkY == y;
-
-	//return std::abs(cameraChunkX - x) <= 1 && std::abs(cameraChunkY - y) <= 1;
 }
 
 MapChunk::MapChunk(MapChunk&& other) noexcept
@@ -320,7 +323,7 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	, uvs(std::move(other.uvs))
 	, indices(std::move(other.indices))
 	, VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
-	, grassPositions(std::move(other.grassPositions))
+	, grassBlades(std::move(other.grassBlades))
 	, grass(std::move(other.grass))
 	, openGLSetupDone(other.openGLSetupDone)
 {
@@ -344,7 +347,7 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	this->VAO = other.VAO;
 	this->VBO = other.VBO;
 	this->EBO = other.EBO;
-	this->grassPositions = std::move(other.grassPositions);
+	this->grassBlades = std::move(other.grassBlades);
 	this->grass = std::move(other.grass);
 	this->openGLSetupDone = other.openGLSetupDone;
 
@@ -407,19 +410,10 @@ void MapChunk::draw()
 	glUseProgram(0);
 
 	// Grass
-	if (isCameraInChunk())
-	{
-		if (!grass)
-		{
-			generateGrass();
-		}
-		
+	if (isCameraInChunk() && grass.get())
+	{		
 		grass->update();
 		grass->draw();
-	}
-	else if (grass)
-	{
-		grass.reset();
 	}
 }
 

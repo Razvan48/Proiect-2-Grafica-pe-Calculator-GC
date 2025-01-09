@@ -28,7 +28,7 @@ private:
 	GLuint VBO;
 	GLuint EBO;
 
-	std::vector<glm::vec3> grassPositions;
+	std::vector<Blade> grassBlades;
 	std::unique_ptr<Grass> grass;
 
 	bool openGLSetupDone;
@@ -46,7 +46,7 @@ private:
 
 	void generateGrass();
 	glm::vec3 generateRandomPointInTriangle(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C) const;
-	bool isCameraInChunk();
+	bool isCameraInChunk() const;
 
 public:
 	MapChunk(int x, int y);
