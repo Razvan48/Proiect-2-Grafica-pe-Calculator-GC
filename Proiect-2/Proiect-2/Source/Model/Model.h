@@ -26,7 +26,7 @@ public:
 	// Destructor
 	~Model();
 
-	void draw(const GLuint& programId);
+	void draw(const GLuint& programId, const glm::mat4& model);
 
 private:
 	const std::string textureName;

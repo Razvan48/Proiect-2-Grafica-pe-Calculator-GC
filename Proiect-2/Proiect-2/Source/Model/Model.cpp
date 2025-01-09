@@ -118,7 +118,7 @@ Model::~Model()
 	// glDeleteTextures(1, &textureID);
 }
 
-void Model::draw(const GLuint& programId)
+void Model::draw(const GLuint& programId, const glm::mat4& model)
 {
 	glUseProgram(programId);
 
@@ -131,7 +131,6 @@ void Model::draw(const GLuint& programId)
 	glUniformMatrix4fv(glGetUniformLocation(programId, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
 	// model
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f));
 	glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 	// Set textureDiffuse sampler2D to GL_TEXTURE0	

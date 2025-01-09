@@ -111,7 +111,7 @@ void drawAllObjectsExceptWater()
 	// Draw objects
 	
 	// tree
-	tree->draw(modelProgramID);
+	tree->draw(modelProgramID, glm::mat4(1.0f));
 
 	// Grass
 	glm::mat4 view = Camera::get().getViewMatrix();
