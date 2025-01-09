@@ -218,7 +218,7 @@ MapChunk::MapChunk(int x, int y)
 	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 3 * (MapChunk::NUM_QUADS_PER_SIDE + 1));
 	this->indices.push_back((MapChunk::NUM_QUADS_PER_SIDE + 1) * (MapChunk::NUM_QUADS_PER_SIDE + 1) + 4 * (MapChunk::NUM_QUADS_PER_SIDE + 1) - 1);
 
-	// grass positions
+	// grass blades
 	for (int i = 1; i < this->heightMap.size(); ++i)
 	{
 		for (int j = 1; j < this->heightMap[i].size(); ++j)
@@ -231,19 +231,19 @@ MapChunk::MapChunk(int x, int y)
 			GLuint index4 = (i - 1) * this->heightMap[i - 1].size() + j - 1;
 			GLuint index5 = i * this->heightMap[i].size() + j - 1;
 
-			for (int k = 0; k < 25; ++k)
+			for (int k = 0; k < GENERATE_GRASS_COUNTER; ++k)
 			{
 				const glm::vec3 pos1 = generateRandomPointInTriangle(vertices[index0], vertices[index1], vertices[index2]);
 				const glm::vec3 pos2 = generateRandomPointInTriangle(vertices[index3], vertices[index4], vertices[index5]);
 
 				if (pos1.y > Water::getHeight() + Grass::getThresholdWaterGrass())
 				{
-					grassPositions.push_back(pos1);
+					grassBlades.push_back(Grass::generateBlade(pos1));
 				}
 
 				if (pos2.y > Water::getHeight() + Grass::getThresholdWaterGrass())
 				{
-					grassPositions.push_back(pos2);
+					grassBlades.push_back(Grass::generateBlade(pos2));
 				}
 			}
 		}
@@ -281,7 +281,7 @@ void MapChunk::setupOpenGL()
 void MapChunk::generateGrass()
 {
 	grass = std::make_unique<Grass>();
-	grass->createVAO(grassPositions);
+	grass->createVAO(grassBlades);
 }
 
 glm::vec3 MapChunk::generateRandomPointInTriangle(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C) const
@@ -320,7 +320,7 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	, uvs(std::move(other.uvs))
 	, indices(std::move(other.indices))
 	, VAO(other.VAO), VBO(other.VBO), EBO(other.EBO)
-	, grassPositions(std::move(other.grassPositions))
+	, grassBlades(std::move(other.grassBlades))
 	, grass(std::move(other.grass))
 	, openGLSetupDone(other.openGLSetupDone)
 {
@@ -344,7 +344,7 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	this->VAO = other.VAO;
 	this->VBO = other.VBO;
 	this->EBO = other.EBO;
-	this->grassPositions = std::move(other.grassPositions);
+	this->grassBlades = std::move(other.grassBlades);
 	this->grass = std::move(other.grass);
 	this->openGLSetupDone = other.openGLSetupDone;
 
@@ -463,6 +463,7 @@ glm::vec2 MapChunk::rotatePoint(float x, float y, float angleDegrees) const
 
 const int MapChunk::CHUNK_SIZE = 48;
 const int MapChunk::NUM_QUADS_PER_SIDE = 16;
+const int MapChunk::GENERATE_GRASS_COUNTER = 25;
 const int MapChunk::MAX_COORDINATE_Y = 666013;
 
 const float MapChunk::DELTA_CULLING_SHADOW_MAPPING = 1.0f;

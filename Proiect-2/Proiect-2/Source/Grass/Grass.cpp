@@ -62,9 +62,13 @@ Grass::~Grass()
 
 void Grass::draw()
 {
-    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
 
     glBindVertexArray(VAO);
+
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, grassInputBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, grassOutputBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, grassIndirectBuffer);
 
     glUseProgram(grassShader);
 
@@ -88,32 +92,8 @@ void Grass::update()
     glDispatchCompute(static_cast<GLuint>(bladesCount), 1, 1);
 }
 
-void Grass::createVAO(const std::vector<glm::vec3>& positions)
+void Grass::createVAO(const std::vector<Blade>& blades)
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> orientation_dis(0, glm::pi<float>());
-    std::uniform_real_distribution<float> height_dis(0.6f, 1.2f);
-    std::uniform_real_distribution<float> dis(-1, 1);
-
-    static int chunkSize = 50;
-
-    std::vector<Blade> blades;
-    for (const glm::vec3& position : positions)
-    {
-        const float x = position.x;
-        const float y = position.y;
-        const float z = position.z;
-        const float blade_height = height_dis(gen);
-
-        blades.emplace_back(Blade(
-            glm::vec4(x, y, z, orientation_dis(gen)),
-            glm::vec4(x, y + blade_height, z, blade_height),
-            glm::vec4(x, y + blade_height, z, 0.1f),
-            glm::vec4(0, y + blade_height, 0, 0.7f + dis(gen) * 0.3f)
-        ));
-    }
-
     bladesCount = static_cast<GLuint>(blades.size());
 
     glGenVertexArrays(1, &VAO);
@@ -166,4 +146,25 @@ void Grass::setupOpenGL()
 
     // Vertex + Tessellation Control Shader + Tessellation Evaluation Shader + Fragment
     grassShader = LoadShaders("shaders/grass/grass.vert", "shaders/grass/grass.frag", "shaders/grass/grass.tesc", "shaders/grass/grass.tese");
+}
+
+Blade Grass::generateBlade(const glm::vec3& position)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> orientation_dis(0, glm::pi<float>());
+    std::uniform_real_distribution<float> height_dis(0.6f, 1.2f);
+    std::uniform_real_distribution<float> dis(-1, 1);
+
+    const float x = position.x;
+    const float y = position.y;
+    const float z = position.z;
+    const float blade_height = height_dis(gen);
+
+    return Blade(
+        glm::vec4(x, y, z, orientation_dis(gen)),
+        glm::vec4(x, y + blade_height, z, blade_height),
+        glm::vec4(x, y + blade_height, z, 0.1f),
+        glm::vec4(0, y + blade_height, 0, 0.7f + dis(gen) * 0.3f)
+    );
 }

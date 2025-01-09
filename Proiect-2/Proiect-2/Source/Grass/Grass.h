@@ -28,9 +28,10 @@ public:
 
 	void draw();
 	void update();
-	void createVAO(const std::vector<glm::vec3>& positions);
+	void createVAO(const std::vector<Blade>& blades);
 
 	static void setupOpenGL();
+	static Blade generateBlade(const glm::vec3& position);
 
 	static float getThresholdWaterGrass() { return THRESH_WATER_GRASS; }
 

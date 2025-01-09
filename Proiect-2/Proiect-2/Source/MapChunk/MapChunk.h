@@ -17,6 +17,7 @@ private:
 	int y;
 
 	static const int NUM_QUADS_PER_SIDE;
+	static const int GENERATE_GRASS_COUNTER;
 
 	std::vector<std::vector<float>> heightMap;
 	std::vector<glm::vec3> vertices;
@@ -28,7 +29,7 @@ private:
 	GLuint VBO;
 	GLuint EBO;
 
-	std::vector<glm::vec3> grassPositions;
+	std::vector<Blade> grassBlades;
 	std::unique_ptr<Grass> grass;
 
 	bool openGLSetupDone;
