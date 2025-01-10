@@ -126,8 +126,8 @@ void drawAllObjectsExceptWater()
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 64, &view);
 	glBufferSubData(GL_UNIFORM_BUFFER, 64, 64, &projection);
 
-	// Map - Terrain + Grass
-	Map::get().draw();
+	// Map - Terrain + Grass + Trees (modelProgramID)
+	Map::get().draw(modelProgramID);
 
 	// Draw skybox as last
 	skybox->draw();

@@ -6,13 +6,15 @@
 #include <thread>
 
 Map::Map()
-	: NUM_CHUNKS_AHEAD(9)
+	: NUM_CHUNKS_AHEAD(7)
 	, lastTimeLoadedOpenGL(0.0f)
 	, TIME_BETWEEN_OPENGL_LOADS(1.0f / 45.0f)
 {
 	this->mapChunks.reserve((this->NUM_CHUNKS_AHEAD * 2 + 1) * (this->NUM_CHUNKS_AHEAD * 2 + 1));
 
 	this->programId = LoadShaders("shaders/chunkMap/chunkMap.vert", "shaders/chunkMap/chunkMap.frag");
+
+	this->tree = new Model("resources/tree/tree0.obj", "tree0");
 }
 
 Map::~Map()
@@ -26,6 +28,8 @@ Map::~Map()
 	this->chunksAlreadyBeingLoadedMutex.lock();
 	this->chunksAlreadyBeingLoaded.clear();
 	this->chunksAlreadyBeingLoadedMutex.unlock();
+
+	delete this->tree;
 }
 
 Map& Map::get()
@@ -34,12 +38,12 @@ Map& Map::get()
 	return instance;
 }
 
-void Map::draw()
+void Map::draw(GLuint modelProgramID)
 {
 	this->mapChunksMutex.lock();
 	for (int i = 0; i < this->mapChunks.size(); ++i)
 		if (this->mapChunks[i].getOpenGLSetupDone())
-			this->mapChunks[i].draw();
+			this->mapChunks[i].draw(modelProgramID);
 	this->mapChunksMutex.unlock();
 
 

@@ -2,6 +2,7 @@
 
 #include "../Camera//Camera.h"
 #include "../MapChunk/MapChunk.h"
+#include "../Model/Model.h"
 
 #include <vector>
 #include <mutex>
@@ -34,14 +35,18 @@ private:
 	float lastTimeLoadedOpenGL;
 	const float TIME_BETWEEN_OPENGL_LOADS;
 
+	Model* tree;
+
 public:
 	static Map& get();
 
-	void draw();
+	void draw(GLuint modelProgramID);
 	void update();
 
 	inline GLuint getProgramId() const { return programId; }
 
 	glm::vec2 getTopLeftCornerOfVisibleMap() const;
 	glm::vec2 getBottomRightCornerOfVisibleMap() const;
+
+	Model* const getTree() const { return tree; }
 };

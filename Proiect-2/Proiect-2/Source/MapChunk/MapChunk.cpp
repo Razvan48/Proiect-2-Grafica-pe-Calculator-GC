@@ -248,6 +248,22 @@ MapChunk::MapChunk(int x, int y)
 			}
 		}
 	}
+
+	// trees
+	for (int i = 0; i < this->heightMap.size(); ++i)
+	{
+		for (int j = 0; j < this->heightMap[i].size(); ++j)
+		{
+			if (this->heightMap[i][j] > Water::getHeight() + Grass::getThresholdWaterGrass() + MapChunk::GRASS_TREE_THRESH && randomGenerator.randomUniformDouble(0.0, 1.0) < MapChunk::TREE_PROBABILITY)
+			{
+				glm::vec3 treePos = glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, this->heightMap[i][j] + MapChunk::TREE_BASE_OFFSET, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize);
+				float treeAngle = randomGenerator.randomUniformDouble(0.0, 360.0);
+				glm::vec3 treeScale = glm::vec3(randomGenerator.randomUniformDouble(MapChunk::TREE_MIN_SCALE, MapChunk::TREE_MAX_SCALE));
+
+				this->trees.push_back(std::make_pair(treePos, std::make_pair(treeAngle, treeScale)));
+			}
+		}
+	}
 }
 
 void MapChunk::setupOpenGL()
@@ -323,6 +339,7 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	, grassBlades(std::move(other.grassBlades))
 	, grass(std::move(other.grass))
 	, openGLSetupDone(other.openGLSetupDone)
+	, trees(std::move(other.trees))
 {
 	other.VAO = 0;
 	other.VBO = 0;
@@ -347,6 +364,7 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	this->grassBlades = std::move(other.grassBlades);
 	this->grass = std::move(other.grass);
 	this->openGLSetupDone = other.openGLSetupDone;
+	this->trees = std::move(other.trees);
 
 	other.VAO = 0;
 	other.VBO = 0;
@@ -370,7 +388,7 @@ MapChunk::~MapChunk()
 	}
 }
 
-void MapChunk::draw()
+void MapChunk::draw(GLuint modelProgramID)
 {
 	glUseProgram(Map::get().getProgramId());
 
@@ -420,6 +438,18 @@ void MapChunk::draw()
 	else if (grass)
 	{
 		grass.reset();
+	}
+
+	// Trees
+	for (int i = 0; i < this->trees.size(); ++i)
+	{
+		glm::vec3 treePos = this->trees[i].first;
+		float treeAngle = this->trees[i].second.first;
+		glm::vec3 treeScale = this->trees[i].second.second;
+
+		glm::mat4 model = glm::translate(treePos) * glm::rotate(glm::radians(treeAngle), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(treeScale);
+
+		Map::get().getTree()->draw(modelProgramID, model);
 	}
 }
 
@@ -471,3 +501,13 @@ const float MapChunk::INF_HEIGHT = 1000000.0f;
 
 glm::vec3 MapChunk::directionalLight = glm::vec3(0.0f, -1.0f, 0.0f); // incepe cu lumina
 const float MapChunk::DAY_NIGHT_CYCLE_SPEED = 36.0f;
+
+const float MapChunk::TREE_PROBABILITY = 0.05f;
+
+const float MapChunk::GRASS_TREE_THRESH = 0.5f;
+
+const float MapChunk::TREE_BASE_OFFSET = -0.5f;
+
+const float MapChunk::TREE_MIN_SCALE = 0.25f;
+const float MapChunk::TREE_MAX_SCALE = 0.75f;
+

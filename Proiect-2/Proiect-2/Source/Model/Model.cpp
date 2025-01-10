@@ -16,6 +16,8 @@
 
 #include "../Water/Water.h"
 
+#include "../MapChunk/MapChunk.h"
+
 // from: https://stackoverflow.com/a/57595105
 template <typename T, typename... Rest>
 void hashCombine(std::size_t& seed, const T& v, const Rest&... rest)
@@ -134,6 +136,9 @@ void Model::draw(const GLuint& programId, const glm::mat4& model)
 
 	// model
 	glUniformMatrix4fv(glGetUniformLocation(programId, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+	// directional light
+	glUniform3fv(glGetUniformLocation(programId, "directionalLight"), 1, &MapChunk::getDirectionalLight()[0]);
 
 	// Set textureDiffuse sampler2D to GL_TEXTURE0	
 	glActiveTexture(GL_TEXTURE0);

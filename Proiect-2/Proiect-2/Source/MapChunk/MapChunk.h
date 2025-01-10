@@ -49,6 +49,16 @@ private:
 	glm::vec3 generateRandomPointInTriangle(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C) const;
 	bool isCameraInChunk();
 
+	std::vector<std::pair<glm::vec3, std::pair<float, glm::vec3>>> trees;
+	static const float TREE_PROBABILITY;
+
+	static const float GRASS_TREE_THRESH;
+
+	static const float TREE_BASE_OFFSET;
+
+	static const float TREE_MIN_SCALE;
+	static const float TREE_MAX_SCALE;
+
 public:
 	MapChunk(int x, int y);
 	MapChunk(const MapChunk& other) = delete;
@@ -63,7 +73,7 @@ public:
 	inline int getX() const { return x; }
 	inline int getY() const { return y; }
 
-	void draw();
+	void draw(GLuint modelProgramID);
 	void update();
 	static void commonUpdate();
 
