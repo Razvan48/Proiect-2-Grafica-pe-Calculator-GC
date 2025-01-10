@@ -15,6 +15,7 @@ Map::Map()
 	this->programId = LoadShaders("shaders/chunkMap/chunkMap.vert", "shaders/chunkMap/chunkMap.frag");
 
 	this->tree = new Model("resources/tree/tree0.obj", "tree0");
+	this->boat = new Model("resources/boat/boat0.obj", "boat0");
 }
 
 Map::~Map()
@@ -30,6 +31,7 @@ Map::~Map()
 	this->chunksAlreadyBeingLoadedMutex.unlock();
 
 	delete this->tree;
+	delete this->boat;
 }
 
 Map& Map::get()

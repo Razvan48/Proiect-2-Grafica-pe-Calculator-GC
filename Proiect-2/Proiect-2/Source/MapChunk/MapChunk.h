@@ -59,6 +59,16 @@ private:
 	static const float TREE_MIN_SCALE;
 	static const float TREE_MAX_SCALE;
 
+	std::vector<std::pair<glm::vec3, std::pair<float, glm::vec3>>> boats;
+	static const float BOAT_PROBABILITY;
+
+	static const float BOAT_BASE_OFFSET;
+
+	static const float BOAT_MIN_SCALE;
+	static const float BOAT_MAX_SCALE;
+
+	static const float WATER_BOAT_THRESH;
+
 public:
 	MapChunk(int x, int y);
 	MapChunk(const MapChunk& other) = delete;

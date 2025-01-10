@@ -25,6 +25,7 @@
 // Objects
 Skybox* skybox;
 Model* tree;
+Model* boat;
 WaterFrameBuffers* fbos;
 Water* water;
 
@@ -97,6 +98,7 @@ void Initialize(void)
 
 	// Objects
 	tree = new Model("resources/tree/tree0.obj", "tree0");
+	boat = new Model("resources/boat/boat0.obj", "boat0");
 	skybox = new Skybox();
 
 	Grass::setupOpenGL();
@@ -115,6 +117,7 @@ void drawAllObjectsExceptWater()
 	
 	// tree
 	tree->draw(modelProgramID, glm::mat4(1.0f));
+	boat->draw(modelProgramID, glm::mat4(1.0f));
 
 	// Grass
 	glm::mat4 view = Camera::get().getViewMatrix();
@@ -194,6 +197,7 @@ void Cleanup(void)
 	// Objects
 	delete skybox;
 	delete tree;
+	delete boat;
 	delete water;
 }
 

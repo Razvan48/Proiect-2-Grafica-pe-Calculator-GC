@@ -264,6 +264,22 @@ MapChunk::MapChunk(int x, int y)
 			}
 		}
 	}
+
+	// Boats
+	for (int i = 0; i < this->heightMap.size(); ++i)
+	{
+		for (int j = 0; j < this->heightMap[i].size(); ++j)
+		{
+			if (this->heightMap[i][j] < Water::getHeight() + MapChunk::WATER_BOAT_THRESH && randomGenerator.randomUniformDouble(0.0, 1.0) < MapChunk::BOAT_PROBABILITY)
+			{
+				glm::vec3 boatPos = glm::vec3(this->x * MapChunk::CHUNK_SIZE + j * quadSize, Water::getHeight() + MapChunk::BOAT_BASE_OFFSET, (this->y + 1) * MapChunk::CHUNK_SIZE - i * quadSize);
+				float boatAngle = randomGenerator.randomUniformDouble(0.0, 360.0);
+				glm::vec3 boatScale = glm::vec3(randomGenerator.randomUniformDouble(MapChunk::BOAT_MIN_SCALE, MapChunk::BOAT_MAX_SCALE));
+
+				this->boats.push_back(std::make_pair(boatPos, std::make_pair(boatAngle, boatScale)));
+			}
+		}
+	}
 }
 
 void MapChunk::setupOpenGL()
@@ -340,6 +356,7 @@ MapChunk::MapChunk(MapChunk&& other) noexcept
 	, grass(std::move(other.grass))
 	, openGLSetupDone(other.openGLSetupDone)
 	, trees(std::move(other.trees))
+	, boats(std::move(other.boats))
 {
 	other.VAO = 0;
 	other.VBO = 0;
@@ -365,6 +382,7 @@ MapChunk& MapChunk::operator= (MapChunk&& other) noexcept
 	this->grass = std::move(other.grass);
 	this->openGLSetupDone = other.openGLSetupDone;
 	this->trees = std::move(other.trees);
+	this->boats = std::move(other.boats);
 
 	other.VAO = 0;
 	other.VBO = 0;
@@ -451,6 +469,18 @@ void MapChunk::draw(GLuint modelProgramID)
 
 		Map::get().getTree()->draw(modelProgramID, model);
 	}
+
+	// Boats
+	for (int i = 0; i < this->boats.size(); ++i)
+	{
+		glm::vec3 boatPos = this->boats[i].first;
+		float boatAngle = this->boats[i].second.first;
+		glm::vec3 boatScale = this->boats[i].second.second;
+
+		glm::mat4 model = glm::translate(boatPos) * glm::rotate(glm::radians(boatAngle), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(boatScale);
+
+		Map::get().getBoat()->draw(modelProgramID, model);
+	}
 }
 
 void MapChunk::update()
@@ -510,4 +540,13 @@ const float MapChunk::TREE_BASE_OFFSET = -0.5f;
 
 const float MapChunk::TREE_MIN_SCALE = 0.25f;
 const float MapChunk::TREE_MAX_SCALE = 0.75f;
+
+const float MapChunk::BOAT_PROBABILITY = 0.01f;
+
+const float MapChunk::BOAT_BASE_OFFSET = -0.25f;
+
+const float MapChunk::BOAT_MIN_SCALE = 0.25f;
+const float MapChunk::BOAT_MAX_SCALE = 0.5f;
+
+const float MapChunk::WATER_BOAT_THRESH = -1.0f;
 

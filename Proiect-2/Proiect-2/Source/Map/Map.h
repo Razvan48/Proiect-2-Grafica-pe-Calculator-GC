@@ -36,6 +36,7 @@ private:
 	const float TIME_BETWEEN_OPENGL_LOADS;
 
 	Model* tree;
+	Model* boat;
 
 public:
 	static Map& get();
@@ -49,4 +50,5 @@ public:
 	glm::vec2 getBottomRightCornerOfVisibleMap() const;
 
 	Model* const getTree() const { return tree; }
+	Model* const getBoat() const { return boat; }
 };

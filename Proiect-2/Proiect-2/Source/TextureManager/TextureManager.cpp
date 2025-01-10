@@ -75,6 +75,8 @@ void TextureManager::loadResources()
 
 	this->loadTexture("donut", "resources/donut/texture_doughnut.jpg");
 	this->loadTexture("tree0", "resources/tree/tree0.bmp");
+
+	this->loadTexture("boat0", "resources/boat/boat0.png");
 }
 
 GLuint TextureManager::getTexture(const std::string& textureName)
