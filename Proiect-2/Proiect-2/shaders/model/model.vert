@@ -10,8 +10,13 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+uniform vec4 plane;
+
 void main(void)
 {
+	vec4 worldPosition = vec4(inPosition, 1.0);
+	gl_ClipDistance[0] = dot(worldPosition, plane);
+
     fragTexCoord = vec2(inTexCoord.x, 1.0 - inTexCoord.y);
     gl_Position = projection * view * model * vec4(inPosition, 1.0);
 }

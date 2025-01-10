@@ -14,6 +14,8 @@
 #include "../Source/Camera/Camera.h"
 #include "../TextureManager/TextureManager.h"
 
+#include "../Water/Water.h"
+
 // from: https://stackoverflow.com/a/57595105
 template <typename T, typename... Rest>
 void hashCombine(std::size_t& seed, const T& v, const Rest&... rest)

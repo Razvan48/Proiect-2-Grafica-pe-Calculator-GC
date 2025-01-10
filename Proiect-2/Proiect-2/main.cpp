@@ -71,6 +71,9 @@ void setClippingPlane(GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 	glUseProgram(Map::get().getProgramId());
 	glUniform4f(glGetUniformLocation(Map::get().getProgramId(), "plane"), x, y, z, w);
 
+	glUseProgram(modelProgramID);
+	glUniform4f(glGetUniformLocation(modelProgramID, "plane"), x, y, z, w);
+
 	glUseProgram(programInUse);
 }
 
