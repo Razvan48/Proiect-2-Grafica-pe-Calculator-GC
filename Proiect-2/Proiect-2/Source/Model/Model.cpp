@@ -122,7 +122,7 @@ Model::~Model()
 	// glDeleteTextures(1, &textureID);
 }
 
-void Model::draw(const GLuint& programId, const glm::mat4& model, MapChunk* mapChunk)
+void Model::draw(const GLuint& programId, const glm::mat4& model, MapChunk* mapChunk, bool isDrawingDepthMap)
 {
 	glUseProgram(programId);
 
@@ -144,9 +144,12 @@ void Model::draw(const GLuint& programId, const glm::mat4& model, MapChunk* mapC
 		glUniformMatrix4fv(lightSpaceMatrixLocation, 1, GL_FALSE, &lightSpaceMatrix[0][0]);
 
 		// shadow map
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, mapChunk->getDepthMap().getDepthMap());
-		glUniform1i(glGetUniformLocation(programId, "depthMap"), 1);
+		if (!isDrawingDepthMap)
+		{
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, mapChunk->getDepthMap().getDepthMap());
+			glUniform1i(glGetUniformLocation(programId, "depthMap"), 1);
+		}
 	}
 
 	// directional light
