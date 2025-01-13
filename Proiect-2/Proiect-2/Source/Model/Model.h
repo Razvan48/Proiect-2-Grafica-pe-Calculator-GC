@@ -7,6 +7,8 @@
 #include <vector>
 #include <string>
 
+#include "../MapChunk/MapChunk.h"
+
 struct Vertex
 {
 	glm::vec3 position;
@@ -26,7 +28,7 @@ public:
 	// Destructor
 	~Model();
 
-	void draw(const GLuint& programId, const glm::mat4& model);
+	void draw(const GLuint& programId, const glm::mat4& model, MapChunk* mapChunk = nullptr, bool drawingDepth = false);
 
 private:
 	const std::string textureName;

@@ -100,4 +100,6 @@ public:
 	static glm::vec3 getDirectionalLight() { return directionalLight; }
 	void outPutShadowMap();
 	void outputDepthValuesFromTexture();
+	
+	inline DepthMap& getDepthMap() { return depthMap; }
 };
