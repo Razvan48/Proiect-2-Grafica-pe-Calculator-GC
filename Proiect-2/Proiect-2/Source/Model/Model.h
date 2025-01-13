@@ -28,7 +28,7 @@ public:
 	// Destructor
 	~Model();
 
-	void draw(const GLuint& programId, const glm::mat4& model, MapChunk* mapChunk = nullptr, bool drawingDepth = false);
+	void draw(const GLuint& programId, const glm::mat4& model, MapChunk* mapChunk = nullptr);
 
 private:
 	const std::string textureName;

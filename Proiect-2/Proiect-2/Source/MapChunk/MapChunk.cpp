@@ -495,6 +495,8 @@ void MapChunk::renderShadowMap()
 	GLuint lightSpaceMatrixLocation = glGetUniformLocation(DepthMap::getShader(), "lightSpaceMatrix");
 	glUniformMatrix4fv(lightSpaceMatrixLocation, 1, GL_FALSE, &lightSpaceMatrix[0][0]);
 
+	glUniformMatrix4fv(glGetUniformLocation(DepthMap::getShader(), "model"), 1, GL_FALSE, &glm::mat4(1.0f)[0][0]);
+
 
 	glBindVertexArray(this->VAO);
 
@@ -536,7 +538,7 @@ void MapChunk::renderShadowMap()
 
 		glm::mat4 model = glm::translate(treePos) * glm::rotate(glm::radians(treeAngle), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(treeScale);
 
-		Map::get().getTree()->draw(DepthMap::getShader(), model, this, true);
+		Map::get().getTree()->draw(DepthMap::getShader(), model, this);
 	}
 
 	// Boats
@@ -548,7 +550,7 @@ void MapChunk::renderShadowMap()
 
 		glm::mat4 model = glm::translate(boatPos) * glm::rotate(glm::radians(boatAngle), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(boatScale);
 
-		Map::get().getBoat()->draw(DepthMap::getShader(), model, this, true);
+		Map::get().getBoat()->draw(DepthMap::getShader(), model, this);
 	}
 
 	depthMap.unbindFBO(WindowManager::get().getWidth(), WindowManager::get().getHeight());
@@ -624,7 +626,7 @@ void MapChunk::draw(GLuint modelProgramID)
 
 		glm::mat4 model = glm::translate(treePos) * glm::rotate(glm::radians(treeAngle), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(treeScale);
 
-		Map::get().getTree()->draw(modelProgramID, model, this, false);
+		Map::get().getTree()->draw(modelProgramID, model, this);
 	}
 
 	// Boats
@@ -636,7 +638,7 @@ void MapChunk::draw(GLuint modelProgramID)
 
 		glm::mat4 model = glm::translate(boatPos) * glm::rotate(glm::radians(boatAngle), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(boatScale);
 
-		Map::get().getBoat()->draw(modelProgramID, model, this, false);
+		Map::get().getBoat()->draw(modelProgramID, model, this);
 	}
 }
 
