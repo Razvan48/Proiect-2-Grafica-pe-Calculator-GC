@@ -51,4 +51,6 @@ public:
 
 	Model* const getTree() const { return tree; }
 	Model* const getBoat() const { return boat; }
+
+	void renderShadowMap();
 };

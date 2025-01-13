@@ -1,6 +1,7 @@
 #include "MapChunk.h"
 
 #include <glm/gtx/transform.hpp>
+#include <iostream>
 
 #include "../PerlinNoise2D/PerlinNoise2D.h"
 #include "../Camera/Camera.h"
@@ -9,11 +10,16 @@
 #include "../RandomGenerator/RandomGenerator.h"
 #include "../GlobalClock/GlobalClock.h"
 #include "../Water/Water.h"
+#include "../WindowManager/WindowManager.h"
+#include "loadShaders.h"
 
 MapChunk::MapChunk(int x, int y)
 	: x(x), y(y), openGLSetupDone(false)
 	, grass(nullptr)
 {
+	depthMap.setShadowHeight(WindowManager::get().getHeight() * 2);
+	depthMap.setShadowWidth(WindowManager::get().getWidth() * 2);
+	depthMap.CreateFBO();
 	float quadSize = (float)MapChunk::CHUNK_SIZE / MapChunk::NUM_QUADS_PER_SIDE;
 
 	float minimumHeight = MapChunk::INF_HEIGHT;
@@ -406,6 +412,152 @@ MapChunk::~MapChunk()
 	}
 }
 
+
+void MapChunk::outPutShadowMap() {
+	// Set viewport to match the window size or shadow map dimensions
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Define the quad vertices, mapping (-1, 1) to screen space
+	float quadVertices[] = {
+		-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+		-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+		 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+		 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	};
+
+	GLuint quadVAO, quadVBO;
+
+	// Generate and bind the VAO/VBO for the quad
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	// Load and use the shaders to render depth map
+
+	GLuint ProgramId = LoadShaders("shaders/depthMap/outPutShadowMap.vert", "shaders/depthMap/outPutShadowMap.frag");
+	glUseProgram(ProgramId);
+
+	// Bind depth texture to texture unit 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, depthMap.getDepthMap());
+	glUniform1i(glGetUniformLocation(ProgramId, "depthMap"), 0);
+
+	// Clear the screen before drawing
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);  // Render the quad with the depth map
+	glBindVertexArray(0);  // Unbind VAO
+}
+
+
+void MapChunk::outputDepthValuesFromTexture() {
+	float shadowWidth = WindowManager::get().getWidth() * 2, shadowHeight = WindowManager::get().getHeight() * 2;
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMap.getDepthMapFBO());
+	std::vector<float> depthValues(shadowWidth * shadowHeight);
+	glReadPixels(0, 0, shadowWidth, shadowHeight, GL_DEPTH_COMPONENT, GL_FLOAT, depthValues.data());
+	int ct = 0;
+
+	for (int y = 0; y < shadowHeight; ++y) {
+		for (int x = 0; x < shadowWidth; ++x) {
+			int idx = y * shadowWidth + x;
+			float depthValue = depthValues[idx];
+			if (depthValue < 1.0f) ct++;;
+		}
+	}
+	std::cout << depthValues.size() << " " << ct << "\n";
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+glm::mat4 MapChunk::getLightSpaceMatrix() 
+{
+	glm::mat4 lightProjection = glm::ortho(1.0f * -CHUNK_SIZE, 1.0f * CHUNK_SIZE, 1.0f * -CHUNK_SIZE, 1.0f * CHUNK_SIZE, 0.1f, 1000.0f);
+	glm::vec3 obs = glm::vec3(x * CHUNK_SIZE + CHUNK_SIZE / 2, 10.0f, y * CHUNK_SIZE + CHUNK_SIZE / 2) + directionalLight * -24.0f;
+	glm::vec3 pctRef = glm::vec3(x * CHUNK_SIZE + CHUNK_SIZE / 2, 10.0f, y * CHUNK_SIZE + CHUNK_SIZE / 2);
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::mat4 lightView = glm::lookAt(obs, pctRef, up);
+	return lightProjection * lightView;
+
+}
+
+void MapChunk::renderShadowMap() 
+{
+	depthMap.bindFBO();
+
+	glm::mat4 lightSpaceMatrix = getLightSpaceMatrix();
+
+	glUseProgram(DepthMap::getShader());
+
+	GLuint lightSpaceMatrixLocation = glGetUniformLocation(DepthMap::getShader(), "lightSpaceMatrix");
+	glUniformMatrix4fv(lightSpaceMatrixLocation, 1, GL_FALSE, &lightSpaceMatrix[0][0]);
+
+
+	glBindVertexArray(this->VAO);
+
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // test
+	// cull front
+	glFrontFace(GL_CW);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
+	glDisable(GL_CULL_FACE);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // test
+
+	glBindVertexArray(0);
+
+	glUseProgram(0);
+
+	// Grass
+	if (isCameraInChunk())
+	{
+		if (!grass)
+		{
+			generateGrass();
+		}
+
+		grass->update();
+		grass->draw();
+	}
+	else if (grass)
+	{
+		grass.reset();
+	}
+
+	// Trees
+	for (int i = 0; i < this->trees.size(); ++i)
+	{
+		glm::vec3 treePos = this->trees[i].first;
+		float treeAngle = this->trees[i].second.first;
+		glm::vec3 treeScale = this->trees[i].second.second;
+
+		glm::mat4 model = glm::translate(treePos) * glm::rotate(glm::radians(treeAngle), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(treeScale);
+
+		Map::get().getTree()->draw(DepthMap::getShader(), model);
+	}
+
+	// Boats
+	for (int i = 0; i < this->boats.size(); ++i)
+	{
+		glm::vec3 boatPos = this->boats[i].first;
+		float boatAngle = this->boats[i].second.first;
+		glm::vec3 boatScale = this->boats[i].second.second;
+
+		glm::mat4 model = glm::translate(boatPos) * glm::rotate(glm::radians(boatAngle), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::scale(boatScale);
+
+		Map::get().getBoat()->draw(DepthMap::getShader(), model);
+	}
+
+	depthMap.unbindFBO(WindowManager::get().getWidth(), WindowManager::get().getHeight());
+
+	//outPutShadowMap();
+}
+
+
+
 void MapChunk::draw(GLuint modelProgramID)
 {
 	glUseProgram(Map::get().getProgramId());
@@ -414,6 +566,7 @@ void MapChunk::draw(GLuint modelProgramID)
 	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "projection"), 1, GL_FALSE, &Camera::get().getProjectionMatrix()[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "view"), 1, GL_FALSE, &Camera::get().getViewMatrix()[0][0]);
 	glUniform3fv(glGetUniformLocation(Map::get().getProgramId(), "directionalLight"), 1, &MapChunk::directionalLight[0]);
+	glUniformMatrix4fv(glGetUniformLocation(Map::get().getProgramId(), "lightSpaceMatrix"), 1, GL_FALSE, &getLightSpaceMatrix()[0][0]);
 
 	// set texture
 	glActiveTexture(GL_TEXTURE0);
@@ -423,6 +576,10 @@ void MapChunk::draw(GLuint modelProgramID)
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, TextureManager::get().getTexture("sand1"));
 	glUniform1i(glGetUniformLocation(Map::get().getProgramId(), "texture1"), 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, depthMap.getDepthMap());
+	glUniform1i(glGetUniformLocation(Map::get().getProgramId(), "depthMap"), 2);
 
 	glUniform1f(glGetUniformLocation(Map::get().getProgramId(), "threshWaterGrass"), Water::getHeight() + Grass::getThresholdWaterGrass() / 2.0f);
 

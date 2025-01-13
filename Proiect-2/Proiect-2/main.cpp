@@ -21,6 +21,7 @@
 #include "Source/Model/Model.h"
 #include "Source/Water/WaterFrameBuffers.h"
 #include "Source/Water/Water.h"
+#include "Source/DepthMap/DepthMap.h"
 
 // Objects
 Skybox* skybox;
@@ -56,6 +57,7 @@ void updateFunction(int val)
 void CreateShaders(void)
 {
 	modelProgramID = LoadShaders("shaders/model/model.vert", "shaders/model/model.frag");
+	DepthMap::setShader(LoadShaders("shaders/depthMap/depthMap.vert", "shaders/depthMap/depthMap.frag"));
 	glUniform1i(glGetUniformLocation(modelProgramID, "textureDiffuse"), 0);
 }
 
@@ -107,6 +109,11 @@ void Initialize(void)
 	water = new Water(*fbos);
 
 	Camera::get().setPosition(glm::vec3(0.0f, 25.0f, 0.0f));
+}
+
+void renderShadowMap() 
+{
+	Map::get().renderShadowMap();
 }
 
 void drawAllObjectsExceptWater()
@@ -181,6 +188,7 @@ void computeWater()
 
 void RenderFunction(void)
 {
+	renderShadowMap();
 	drawAllObjectsExceptWater();
 
 	computeWater();

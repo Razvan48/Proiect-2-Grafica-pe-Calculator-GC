@@ -136,6 +136,7 @@ xcopy /y /d "$(ProjectDir)lib\x32\SOIL\*.dll" "$(OutDir)" &amp;</Command>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -180,6 +181,7 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Source\Application\Application.cpp" />
     <ClCompile Include="Source\Camera\Camera.cpp" />
+    <ClCompile Include="Source\DepthMap\DepthMap.cpp" />
     <ClCompile Include="Source\GlobalClock\GlobalClock.cpp" />
     <ClCompile Include="Source\Grass\Grass.cpp" />
     <ClCompile Include="Source\InputManager\InputManager.cpp" />
@@ -504,6 +506,7 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <ClInclude Include="include\tiny_obj_loader.h" />
     <ClInclude Include="Source\Application\Application.h" />
     <ClInclude Include="Source\Camera\Camera.h" />
+    <ClInclude Include="Source\DepthMap\DepthMap.h" />
     <ClInclude Include="Source\GlobalClock\GlobalClock.h" />
     <ClInclude Include="Source\Grass\Grass.h" />
     <ClInclude Include="Source\InputManager\InputManager.h" />
@@ -683,6 +686,10 @@ xcopy /y /d "$(ProjectDir)lib\x64\SOIL\*.dll" "$(OutDir)" &amp;</Command>
     <None Include="lib\x64\SOIL\SOIL.dll" />
     <None Include="shaders\chunkMap\chunkMap.frag" />
     <None Include="shaders\chunkMap\chunkMap.vert" />
+    <None Include="shaders\depthMap\depthMap.frag" />
+    <None Include="shaders\depthMap\depthMap.vert" />
+    <None Include="shaders\depthMap\outPutShadowMap.frag" />
+    <None Include="shaders\depthMap\outPutShadowMap.vert" />
     <None Include="shaders\grass\grass.comp" />
     <None Include="shaders\grass\grass.frag" />
     <None Include="shaders\grass\grass.tesc" />

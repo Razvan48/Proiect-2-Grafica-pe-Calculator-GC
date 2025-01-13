@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "../Grass/Grass.h"
+#include "../DepthMap/DepthMap.h"
 
 class MapChunk
 {
@@ -31,6 +32,8 @@ private:
 
 	std::vector<Blade> grassBlades;
 	std::unique_ptr<Grass> grass;
+
+	DepthMap depthMap;
 
 	bool openGLSetupDone;
 
@@ -83,6 +86,8 @@ public:
 	inline int getX() const { return x; }
 	inline int getY() const { return y; }
 
+	glm::mat4 getLightSpaceMatrix();
+	void renderShadowMap();
 	void draw(GLuint modelProgramID);
 	void update();
 	static void commonUpdate();
@@ -93,4 +98,6 @@ public:
 	inline bool getOpenGLSetupDone() const { return this->openGLSetupDone; }
 
 	static glm::vec3 getDirectionalLight() { return directionalLight; }
+	void outPutShadowMap();
+	void outputDepthValuesFromTexture();
 };

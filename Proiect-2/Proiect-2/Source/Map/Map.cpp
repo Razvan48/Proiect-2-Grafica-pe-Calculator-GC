@@ -40,6 +40,14 @@ Map& Map::get()
 	return instance;
 }
 
+void Map::renderShadowMap() {
+	this->mapChunksMutex.lock();
+	for (int i = 0; i < this->mapChunks.size(); ++i)
+		if (this->mapChunks[i].getOpenGLSetupDone())
+			this->mapChunks[i].renderShadowMap();
+	this->mapChunksMutex.unlock();
+}
+
 void Map::draw(GLuint modelProgramID)
 {
 	this->mapChunksMutex.lock();

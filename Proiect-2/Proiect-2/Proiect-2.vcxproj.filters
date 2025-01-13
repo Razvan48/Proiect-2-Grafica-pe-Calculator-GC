@@ -151,6 +151,12 @@
     <Filter Include="Source Files\Source\Water">
       <UniqueIdentifier>{f18c9964-7429-4d38-9721-a3493784c600}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Source\DeapthMap">
+      <UniqueIdentifier>{7a5c2684-ef85-4cce-9c6a-f84fedf16a19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\shaders\depthMap">
+      <UniqueIdentifier>{7c60c127-606a-452e-a140-4e924add8992}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -224,6 +230,9 @@
     </ClCompile>
     <ClCompile Include="src\tiny_obj_loader.cpp">
       <Filter>Source Files\template-built-ins\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DepthMap\DepthMap.cpp">
+      <Filter>Source Files\Source\DeapthMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1175,6 +1184,9 @@
     <ClInclude Include="include\tiny_obj_loader.h">
       <Filter>Header Files\template-built-ins\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Source\DepthMap\DepthMap.h">
+      <Filter>Source Files\Source\DeapthMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\glm\CMakeLists.txt">
@@ -1694,6 +1706,18 @@
     </None>
     <None Include="shaders\water\water.vert">
       <Filter>Resource Files\shaders\water</Filter>
+    </None>
+    <None Include="shaders\depthMap\depthMap.frag">
+      <Filter>Resource Files\shaders\depthMap</Filter>
+    </None>
+    <None Include="shaders\depthMap\depthMap.vert">
+      <Filter>Resource Files\shaders\depthMap</Filter>
+    </None>
+    <None Include="shaders\depthMap\outPutShadowMap.frag">
+      <Filter>Resource Files\shaders\depthMap</Filter>
+    </None>
+    <None Include="shaders\depthMap\outPutShadowMap.vert">
+      <Filter>Resource Files\shaders\depthMap</Filter>
     </None>
   </ItemGroup>
 </Project>

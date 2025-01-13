@@ -8,11 +8,14 @@ out vec2 texCoord;
 
 out vec3 fragPosition;
 out vec3 fragNormal;
+out vec4 FragPosLightSpace;
 
 uniform mat4 projection;
 uniform mat4 view;
+uniform mat4 lightSpaceMatrix;
 
 uniform vec4 plane;
+
 
 void main()
 {
@@ -25,4 +28,5 @@ void main()
 	fragNormal = inNormal;
 
 	gl_Position = projection * view * vec4(inPosition, 1.0);
+	FragPosLightSpace = lightSpaceMatrix * vec4(inPosition, 1.0);
 }
