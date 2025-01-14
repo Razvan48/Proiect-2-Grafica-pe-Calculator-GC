@@ -69,6 +69,8 @@ void Grass::draw()
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, grassInputBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, grassOutputBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, grassIndirectBuffer);
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, grassIndirectBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, grassOutputBuffer);
 
     glUseProgram(grassShader);
 
@@ -80,6 +82,8 @@ void Grass::update()
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, grassInputBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, grassOutputBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, grassIndirectBuffer);
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, grassIndirectBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, grassOutputBuffer);
 
     glUseProgram(grassComputeShader);
 
