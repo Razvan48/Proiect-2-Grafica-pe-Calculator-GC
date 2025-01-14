@@ -31,6 +31,7 @@ void main() {
   const vec3 dir = tese_in.dir.xyz;
   const float width = tese_in.v2.w;
   
+  // interpolarea punctelor pe patch => alungirea folosind width si height
   const vec3 a = v0 + v * (v1 - v0);
   const vec3 b = v1 + v * (v2 - v1);
   const vec3 c = a + v * (b - a);
