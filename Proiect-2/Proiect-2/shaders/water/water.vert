@@ -34,8 +34,7 @@ void main()
 	// texture coords (for waves)
 	vec4 scaledVertexCoords = scale * vec4(inPosition, 1.0);
 	textureCoords = vec2((scaledVertexCoords.x + abs(scaledVertexCoords.x)) / texCoordsScaleFactor, (scaledVertexCoords.z + abs(scaledVertexCoords.z)) / texCoordsScaleFactor);
-	// textureCoords = vec2(inPosition.x + 0.5, inPosition.z + 0.5) * tiling;
-	// textureCoords = texCoord * tiling;
+
 
 	toCameraVector = cameraPosition - worldPosition.xyz;
 
