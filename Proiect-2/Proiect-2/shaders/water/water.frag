@@ -22,7 +22,7 @@ uniform vec3 lightColor;
 const float waveStrength = 0.02;
 
 const float shineDamper = 64.0;
-const float reflectivity = 0.3;
+const float reflectivity = 0.5; // 0.3;
 
 const float depthLimit = 1.0;
 
@@ -45,10 +45,6 @@ void main()
 
 	float waterDepth = floorDistance - waterDistance;
 
-	// vec2 distortion1 = (texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y)).rg * 2.0 - 1.0) * waveStrength;
-	// vec2 distortion2 = (texture(dudvMap, vec2(-textureCoords.x + moveFactor, textureCoords.y + moveFactor)).rg * 2.0 - 1.0) * waveStrength;
-	// vec2 totalDistortion = distortion1 + distortion2;
-
 	vec2 distortedTexCoords = texture(dudvMap, vec2(textureCoords.x + moveFactor, textureCoords.y)).rg * 0.1;
 	distortedTexCoords = textureCoords + vec2(distortedTexCoords.x, distortedTexCoords.y + moveFactor);
 	vec2 totalDistortion = (texture(dudvMap, distortedTexCoords).rg * 2.0 - 1.0) * waveStrength * clamp(pow(waterDepth, 64) / 40.0, 0.0, 1.0);
@@ -67,12 +63,20 @@ void main()
 	float refractionFactor = dot(viewVector, vec3(0.0, 1.0, 0.0));
 	refractionFactor = pow(refractionFactor, 2.0);
 
+	out_Color = mix(reflectionColor, refractionColor, refractionFactor);
+	out_Color = mix(out_Color, outColorVertex, 0.1);
 
 	// normal mapping and lighting
 	vec4 normalMapColor = texture(normalMap, distortedTexCoords);
 	vec3 normal = vec3(normalMapColor.r * 2.0 - 1.0, normalMapColor.b, normalMapColor.g * 2.0 - 1.0);
 	normal = normalize(normal);
 
+	// to make water darker in the night
+	float diff = max(dot(vec3(0.0, 1.0, 0.0), normalize(fromLightVector)), 0.0);
+	vec4 defaultWaterColorInDarkness = vec4(0.02, 0.12, 0.24, 1.0);
+	out_Color = mix(defaultWaterColorInDarkness, out_Color, 1.0 - clamp(pow(diff, 1.0), 0.0, 1.0) * 0.8 + 0.2);
+
+	// specular
 	vec3 reflectedLight = reflect(normalize(fromLightVector), normal);
 	float specular = max(dot(reflectedLight, viewVector), 0.0);
 	specular = pow(specular, shineDamper);
@@ -81,9 +85,8 @@ void main()
 	// wave sparks in darkness (ambient highlights)
 	float ambientHighlights = dot(normal, vec3(0.0, 1.0, 0.0));
 
-	out_Color = mix(reflectionColor, refractionColor, refractionFactor);
-	out_Color = mix(out_Color, outColorVertex, 0.1) + vec4(specularHighlights, 0.0);
-	// out_Color += vec4(1.0, 1.0, 1.0, 1.0) * pow((1.0 - ambientHighlights), 2) / 1.0;
-	// out_Color = mix(out_Color, vec4(1.0, 1.0, 1.0, 1.0), pow((1.0 - ambientHighlights), 1) / 1.0);
+	out_Color = mix(out_Color, vec4(1.0, 1.0, 1.0, 1.0), pow((ambientHighlights), 1024) / 2.0);
+
+	out_Color = out_Color + vec4(specularHighlights, 0.0);
 	out_Color.a = clamp(waterDepth / depthLimit, 0.0, 1.0);
 }
