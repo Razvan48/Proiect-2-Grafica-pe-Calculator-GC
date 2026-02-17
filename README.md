@@ -11,3 +11,12 @@ Petrovici Ricardo ($351$) <br/>
 <br/>
 <br/>
 
+<p align = "center">
+  <img width="505" height="425" src="https://github.com/Razvan48/Proiect-2-Grafica-pe-Calculator-GC/blob/main/Demo/Demo-0.gif">
+  <img width="505" height="425" src="https://github.com/Razvan48/Proiect-2-Grafica-pe-Calculator-GC/blob/main/Demo/Demo-1.gif">
+</p>
+
+<br/>
+<br/>
+<br/>
+
